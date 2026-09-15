@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Read(**/.env*)",
+      "Read(**/credentials*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.jks)",
+      "Read(**/*.keystore)",
+      "Read(./android/local.properties)",
+      "Read(./infra/terraform.tfvars)",
+      "Read(./infra/*.tfstate)",
+      "Read(./infra/*.tfstate.*)",
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(curl * | bash)",
+      "Bash(terraform apply:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(aws ecs run-task:*)",
+      "Bash(aws s3 rm:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v jq >/dev/null 2>&1 || exit 0; f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty' 2>/dev/null); case \"$f\" in *.py) [ -x backend/.venv/bin/ruff ] && backend/.venv/bin/ruff format \"$f\" >/dev/null 2>&1 || true ;; *.tf) command -v terraform >/dev/null 2>&1 && terraform fmt \"$f\" >/dev/null 2>&1 || true ;; esac; exit 0",
+            "timeout": 15,
+            "statusMessage": "format"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -x backend/.venv/bin/ruff ] || exit 0; cd backend && .venv/bin/ruff check . 2>&1 | tail -40",
+            "timeout": 60,
+            "async": true,
+            "statusMessage": "ruff check"
+          }
+        ]
+      }
+    ]
+  }
+}
