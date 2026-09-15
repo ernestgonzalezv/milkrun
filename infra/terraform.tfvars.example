@@ -1,0 +1,10 @@
+# Copiar a terraform.tfvars y rellenar. terraform.tfvars esta en .gitignore.
+
+owner        = "ernesto"
+github_owner = "tu-usuario-de-github"
+alert_email  = "tu@correo.com"
+
+# Opcional: con dominio propio el stack monta ACM y redireccion 80 -> 443.
+# Sin el, la API se queda en HTTP y los outputs lo dicen.
+# domain_name     = "api.milkrun.dev"
+# route53_zone_id = "Z0123456789ABCDEFGHIJ"
