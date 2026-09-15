@@ -1,0 +1,10 @@
+# Herramientas de desarrollo y CI. No entran en la imagen de produccion.
+-r requirements.txt
+
+pytest==9.1.1
+pytest-django==4.14.0
+ruff==0.16.7
+
+# Referencia de calidad del optimizador (`python -m optimizer.benchmark --referencia`).
+# NO va en requirements.txt: son mas de 100 MB y solo se usa en el benchmark.
+ortools==9.15.6755
