@@ -1,0 +1,15 @@
+# Dependencias de ejecucion. Solo lo que se importa directamente:
+# las transitivas las resuelve pip y no se fijan aqui a proposito, para que
+# los parches de seguridad entren sin editar este archivo.
+Django==5.2.17
+djangorestframework==3.18.1
+djangorestframework-simplejwt==5.5.1
+drf-spectacular==0.30.0
+django-cors-headers==4.9.0
+django-filter==26.1
+python-dotenv==1.2.3
+dj-database-url==3.1.2
+
+# Solo se usan en contenedor/produccion; en local corre SQLite + runserver.
+psycopg[binary]==3.2.12
+gunicorn==23.0.0
