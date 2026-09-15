@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Delivery route planning and live tracking." />
+
+    <!-- Inline SVG favicon: one less request, scales to every density, and it
+         follows the mark in src/components/Logo.tsx. -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%229%22%20fill%3D%22%235B6CF6%22%2F%3E%3Cpath%20d%3D%22M9.6%2012.8V17.6a4.6%204.6%200%200%200%204.6%204.6h4.1%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20fill%3D%22none%22%2F%3E%3Ccircle%20cx%3D%229.6%22%20cy%3D%229.2%22%20r%3D%223%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222.3%22%20fill%3D%22none%22%2F%3E%3Ccircle%20cx%3D%2222%22%20cy%3D%2222.2%22%20r%3D%223.7%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E" />
+
+    <!-- Inter only for the two weights the design actually uses. Preconnect
+         because the font blocks first paint of the sign-in screen otherwise. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&display=swap"
+    />
+
+    <title>milkrun — dispatch</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
