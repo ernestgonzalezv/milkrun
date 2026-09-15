@@ -1,0 +1,58 @@
+name: Bug report
+description: Something behaves differently than documented
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: the README has a **Known limitations** section. If what you found is listed
+        there, it is a deliberate trade rather than a bug — though an argument for changing the
+        trade is welcome as a discussion.
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      options:
+        - backend (Django / DRF)
+        - optimizer (the solver)
+        - dashboard (React)
+        - driver app (Android)
+        - infra (Terraform)
+        - docs
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: What you ran
+      description: The exact command or the steps through the UI.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what happened instead
+      description: Paste the actual output, not a summary of it.
+    validations:
+      required: true
+
+  - type: input
+    id: seed
+    attributes:
+      label: Seed
+      description: >
+        For anything involving the solver or the demo data. Every benchmark and test instance is
+        reproducible from its seed, and without it a routing bug is very hard to chase.
+      placeholder: "--seed 2026 --city nyc --stops 80"
+
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: "macOS 15.5, Python 3.13.2, Node 24.3"
+    validations:
+      required: true

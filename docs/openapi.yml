@@ -1,0 +1,1799 @@
+openapi: 3.0.3
+info:
+  title: milkrun API
+  version: 1.0.0
+  description: Delivery route planning and live tracking.
+paths:
+  /api/v1/auth/token/:
+    post:
+      operationId: v1_auth_token_create
+      description: Returns `access` (8 h, one shift) and `refresh` (30 days).
+      summary: Obtain the token pair
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/v1/auth/token/refresh/:
+    post:
+      operationId: v1_auth_token_refresh_create
+      description: 'The refresh token rotates on every use: the previous one stops
+        working.'
+      summary: Refresh the access token
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/auth/token/verify/:
+    post:
+      operationId: v1_auth_token_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      summary: Check whether a token is still valid
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+        required: true
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/me/:
+    get:
+      operationId: v1_auth_me_retrieve
+      description: La app movil y el dashboard la llaman al arrancar para saber el
+        rol.
+      summary: The signed-in user
+      tags:
+      - Authentication
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/stops/:
+    get:
+      operationId: v1_stops_list
+      description: Listado y alta de paradas.
+      tags:
+      - Deliveries
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stop'
+          description: ''
+    post:
+      operationId: v1_stops_create
+      description: Listado y alta de paradas.
+      tags:
+      - Deliveries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stop'
+          description: ''
+  /api/v1/stops/{id}/:
+    get:
+      operationId: v1_stops_retrieve
+      description: Consulta, edicion y baja de una parada.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Deliveries
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stop'
+          description: ''
+    put:
+      operationId: v1_stops_update
+      description: Consulta, edicion y baja de una parada.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Deliveries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stop'
+          description: ''
+    patch:
+      operationId: v1_stops_partial_update
+      description: Consulta, edicion y baja de una parada.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Deliveries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStopRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStopRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStopRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stop'
+          description: ''
+    delete:
+      operationId: v1_stops_destroy
+      description: Consulta, edicion y baja de una parada.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Deliveries
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Stop deleted
+  /api/v1/routes/plan/:
+    post:
+      operationId: v1_routes_plan_create
+      description: Dispara el optimizador y persiste el plan resultante.
+      summary: Plan a depot's routes for one day
+      tags:
+      - Planning
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PlanRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PlanRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Route'
+          description: ''
+        '409':
+          description: A plan already exists and no re-plan was requested
+  /api/v1/routes/:
+    get:
+      operationId: v1_routes_list
+      description: 'Consulta de rutas planificadas. Solo lectura: se crean planificando.'
+      parameters:
+      - in: query
+        name: expand
+        schema:
+          type: string
+          enum:
+          - stops
+        description: With `expand=stops` the list includes each route's stops. The
+          dashboard map uses it, because it needs the whole day in one request. The
+          default listing stays light.
+      tags:
+      - Planning
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RouteSummary'
+          description: ''
+  /api/v1/routes/{id}/:
+    get:
+      operationId: v1_routes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Planning
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+          description: ''
+  /api/v1/me/route/:
+    get:
+      operationId: v1_me_route_retrieve
+      description: Returns 204 when the driver has no route assigned for that date.
+      summary: The signed-in driver's route for the day
+      tags:
+      - Driver app
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+          description: ''
+        '204':
+          description: No route assigned
+  /api/v1/me/events/:
+    post:
+      operationId: v1_me_events_create
+      description: 'Idempotent on `client_event_id`. Resending the same batch duplicates
+        nothing: events already seen are reported under `duplicates` and the response
+        stays 200, so the app can clear its queue without ambiguity.'
+      summary: Sync the driver event queue
+      tags:
+      - Driver app
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventBatchRequest'
+            examples:
+              ADeliveryAndAFailureInOneBatch:
+                value:
+                  events:
+                  - stop: 12
+                    client_event_id: 6f1a5c1e-8f0b-4a5e-9d33-2f2f0f6a1b01
+                    kind: delivered
+                    occurred_at: '2026-09-12T14:02:11Z'
+                  - stop: 13
+                    client_event_id: 6f1a5c1e-8f0b-4a5e-9d33-2f2f0f6a1b02
+                    kind: failed
+                    reason: absent
+                    note: Knocked three times, nobody answered
+                    occurred_at: '2026-09-12T14:31:47Z'
+                summary: A delivery and a failure in one batch
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EventBatchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EventBatchRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Summary of what the sync stored
+  /api/v1/me/pings/:
+    post:
+      operationId: v1_me_pings_create
+      summary: Upload buffered GPS positions
+      tags:
+      - Driver app
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PingBatchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PingBatchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PingBatchRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '202':
+          description: Number of new positions stored
+  /api/v1/track/{code}/:
+    get:
+      operationId: v1_track_retrieve
+      description: No authentication. Limited to 60 requests per minute per IP.
+      summary: Public tracking for one shipment
+      parameters:
+      - in: path
+        name: code
+        schema:
+          type: string
+        required: true
+      tags:
+      - Public tracking
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicTracking'
+          description: ''
+  /api/v1/depots/:
+    post:
+      operationId: v1_depots_create
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepotRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DepotRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DepotRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Depot'
+          description: ''
+    get:
+      operationId: v1_depots_list
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDepotList'
+          description: ''
+  /api/v1/depots/{id}/:
+    patch:
+      operationId: v1_depots_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this depot.
+        required: true
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDepotRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDepotRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDepotRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Depot'
+          description: ''
+    get:
+      operationId: v1_depots_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this depot.
+        required: true
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Depot'
+          description: ''
+    put:
+      operationId: v1_depots_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this depot.
+        required: true
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepotRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DepotRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DepotRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Depot'
+          description: ''
+    delete:
+      operationId: v1_depots_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this depot.
+        required: true
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/vehicles/:
+    post:
+      operationId: v1_vehicles_create
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+    get:
+      operationId: v1_vehicles_list
+      parameters:
+      - in: query
+        name: depot
+        schema:
+          type: integer
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedVehicleList'
+          description: ''
+  /api/v1/vehicles/{id}/:
+    patch:
+      operationId: v1_vehicles_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vehicle.
+        required: true
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVehicleRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+    get:
+      operationId: v1_vehicles_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vehicle.
+        required: true
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+    put:
+      operationId: v1_vehicles_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vehicle.
+        required: true
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VehicleRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+          description: ''
+    delete:
+      operationId: v1_vehicles_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this vehicle.
+        required: true
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/drivers/:
+    post:
+      operationId: v1_drivers_create
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DriverProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DriverProfileRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+          description: ''
+    get:
+      operationId: v1_drivers_list
+      parameters:
+      - in: query
+        name: depot
+        schema:
+          type: integer
+      - in: query
+        name: is_available
+        schema:
+          type: boolean
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDriverProfileList'
+          description: ''
+  /api/v1/drivers/{id}/:
+    patch:
+      operationId: v1_drivers_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this driver.
+        required: true
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDriverProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDriverProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDriverProfileRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+          description: ''
+    get:
+      operationId: v1_drivers_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this driver.
+        required: true
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+          description: ''
+    put:
+      operationId: v1_drivers_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this driver.
+        required: true
+      tags:
+      - Fleet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DriverProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DriverProfileRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+          description: ''
+    delete:
+      operationId: v1_drivers_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this driver.
+        required: true
+      tags:
+      - Fleet
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    BlankEnum:
+      enum:
+      - ''
+    DeliveryEventRequest:
+      type: object
+      properties:
+        stop:
+          type: integer
+        client_event_id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        reason:
+          default: ''
+          oneOf:
+          - $ref: '#/components/schemas/ReasonEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        note:
+          type: string
+          default: ''
+        latitude:
+          type: number
+          format: double
+          nullable: true
+        longitude:
+          type: number
+          format: double
+          nullable: true
+        occurred_at:
+          type: string
+          format: date-time
+      required:
+      - client_event_id
+      - kind
+      - occurred_at
+      - stop
+    Depot:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 120
+        address:
+          type: string
+          maxLength: 255
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        is_active:
+          type: boolean
+          title: Active
+      required:
+      - id
+      - latitude
+      - longitude
+      - name
+    DepotRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        address:
+          type: string
+          maxLength: 255
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        is_active:
+          type: boolean
+          title: Active
+      required:
+      - latitude
+      - longitude
+      - name
+    DriverProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        username:
+          type: string
+          readOnly: true
+        full_name:
+          type: string
+          readOnly: true
+        depot:
+          type: integer
+        default_vehicle:
+          type: integer
+          nullable: true
+        license_number:
+          type: string
+          title: Licence
+          maxLength: 32
+        is_available:
+          type: boolean
+          title: Available
+      required:
+      - depot
+      - full_name
+      - id
+      - user
+      - username
+    DriverProfileRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        depot:
+          type: integer
+        default_vehicle:
+          type: integer
+          nullable: true
+        license_number:
+          type: string
+          title: Licence
+          maxLength: 32
+        is_available:
+          type: boolean
+          title: Available
+      required:
+      - depot
+      - user
+    EventBatchRequest:
+      type: object
+      description: |-
+        Tanda de hechos que la app movil tenia en cola.
+
+        Se validan todos antes de escribir ninguno: si el chofer manda cuarenta y
+        el numero doce viene corrupto, es mejor rechazar la tanda con un error
+        claro que dejar once escritos y perder el resto en silencio.
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryEventRequest'
+      required:
+      - events
+    KindEnum:
+      enum:
+      - departed
+      - arrived
+      - delivered
+      - failed
+      - note
+      type: string
+      description: |-
+        * `departed` - departed
+        * `arrived` - arrived
+        * `delivered` - delivered
+        * `failed` - failed
+        * `note` - note
+    LocationPingRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        accuracy_m:
+          type: number
+          format: double
+          nullable: true
+        speed_kmh:
+          type: number
+          format: double
+          nullable: true
+        recorded_at:
+          type: string
+          format: date-time
+      required:
+      - latitude
+      - longitude
+      - recorded_at
+    PaginatedDepotList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Depot'
+    PaginatedDriverProfileList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DriverProfile'
+    PaginatedVehicleList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vehicle'
+    PatchedDepotRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        address:
+          type: string
+          maxLength: 255
+        latitude:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        longitude:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        is_active:
+          type: boolean
+          title: Active
+    PatchedDriverProfileRequest:
+      type: object
+      properties:
+        user:
+          type: integer
+        depot:
+          type: integer
+        default_vehicle:
+          type: integer
+          nullable: true
+        license_number:
+          type: string
+          title: Licence
+          maxLength: 32
+        is_available:
+          type: boolean
+          title: Available
+    PatchedStopRequest:
+      type: object
+      properties:
+        depot:
+          type: integer
+        customer_name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        phone:
+          type: string
+          default: ''
+          maxLength: 32
+        address:
+          type: string
+          minLength: 1
+          maxLength: 255
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        demand:
+          type: number
+          format: double
+          minimum: 0
+          default: 1.0
+        service_minutes:
+          type: integer
+          minimum: 0
+          default: 5
+        scheduled_date:
+          type: string
+          format: date
+        notes:
+          type: string
+          default: ''
+    PatchedVehicleRequest:
+      type: object
+      properties:
+        depot:
+          type: integer
+        code:
+          type: string
+          minLength: 1
+          maxLength: 32
+        plate:
+          type: string
+          maxLength: 16
+        capacity:
+          type: number
+          format: double
+          minimum: 0.1
+          description: In the same unit as the stops' demand.
+        max_shift_minutes:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Max shift (min)
+        avg_speed_kmh:
+          type: number
+          format: double
+          title: Average speed (km/h)
+        is_active:
+          type: boolean
+          title: Active
+    PingBatchRequest:
+      type: object
+      properties:
+        pings:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationPingRequest'
+      required:
+      - pings
+    PlanRequestRequest:
+      type: object
+      properties:
+        depot:
+          type: integer
+          description: Id del deposito a planificar.
+        date:
+          type: string
+          format: date
+          description: Fecha de reparto (YYYY-MM-DD).
+        replan:
+          type: boolean
+          default: false
+          description: Rehacer el plan si ya existe uno para ese dia.
+      required:
+      - date
+      - depot
+    PublicTracking:
+      type: object
+      description: |-
+        Lo que ve cualquiera con el codigo de seguimiento.
+
+        Expone el minimo indispensable: sin telefono, sin direccion, sin notas y
+        con los apellidos enmascarados. El codigo circula por WhatsApp.
+      properties:
+        tracking_code:
+          type: string
+        customer_name:
+          type: string
+          readOnly: true
+        status:
+          type: string
+        status_display:
+          type: string
+          readOnly: true
+        scheduled_date:
+          type: string
+          format: date
+        timeline:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+      required:
+      - customer_name
+      - scheduled_date
+      - status
+      - status_display
+      - timeline
+      - tracking_code
+    ReasonEnum:
+      enum:
+      - absent
+      - wrong_address
+      - refused
+      - no_access
+      - other
+      type: string
+      description: |-
+        * `absent` - absent
+        * `wrong_address` - wrong_address
+        * `refused` - refused
+        * `no_access` - no_access
+        * `other` - other
+    RoleEnum:
+      enum:
+      - dispatcher
+      - driver
+      type: string
+      description: |-
+        * `dispatcher` - Dispatcher
+        * `driver` - Driver
+    Route:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        depot:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        vehicle:
+          type: integer
+          readOnly: true
+        vehicle_code:
+          type: string
+          readOnly: true
+        driver:
+          type: integer
+          readOnly: true
+          nullable: true
+        driver_name:
+          type: string
+          readOnly: true
+        planned_distance_km:
+          type: number
+          format: double
+          readOnly: true
+        planned_duration_minutes:
+          type: number
+          format: double
+          readOnly: true
+        planned_load:
+          type: number
+          format: double
+          readOnly: true
+        optimizer_metrics:
+          readOnly: true
+        stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/RouteStop'
+          readOnly: true
+      required:
+      - date
+      - depot
+      - driver
+      - driver_name
+      - id
+      - optimizer_metrics
+      - planned_distance_km
+      - planned_duration_minutes
+      - planned_load
+      - status
+      - stops
+      - vehicle
+      - vehicle_code
+    RouteStop:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        sequence:
+          type: integer
+          readOnly: true
+        leg_distance_km:
+          type: number
+          format: double
+          readOnly: true
+        eta_minutes:
+          type: number
+          format: double
+          readOnly: true
+        stop:
+          allOf:
+          - $ref: '#/components/schemas/Stop'
+          readOnly: true
+      required:
+      - eta_minutes
+      - id
+      - leg_distance_km
+      - sequence
+      - stop
+    RouteSummary:
+      type: object
+      description: 'Version liviana para listados: sin las paradas anidadas.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        vehicle_code:
+          type: string
+          readOnly: true
+        driver_name:
+          type: string
+          readOnly: true
+        planned_distance_km:
+          type: number
+          format: double
+          readOnly: true
+        planned_duration_minutes:
+          type: number
+          format: double
+          readOnly: true
+        stop_count:
+          type: integer
+          readOnly: true
+      required:
+      - date
+      - driver_name
+      - id
+      - planned_distance_km
+      - planned_duration_minutes
+      - status
+      - stop_count
+      - vehicle_code
+    Stop:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        tracking_code:
+          type: string
+          readOnly: true
+        depot:
+          type: integer
+        customer_name:
+          type: string
+          maxLength: 120
+        phone:
+          type: string
+          default: ''
+          maxLength: 32
+        address:
+          type: string
+          maxLength: 255
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        demand:
+          type: number
+          format: double
+          minimum: 0
+          default: 1.0
+        service_minutes:
+          type: integer
+          minimum: 0
+          default: 5
+        scheduled_date:
+          type: string
+          format: date
+        status:
+          type: string
+          readOnly: true
+        status_display:
+          type: string
+          readOnly: true
+        notes:
+          type: string
+          default: ''
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - address
+      - created_at
+      - customer_name
+      - depot
+      - id
+      - latitude
+      - longitude
+      - status
+      - status_display
+      - tracking_code
+    StopRequest:
+      type: object
+      properties:
+        depot:
+          type: integer
+        customer_name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        phone:
+          type: string
+          default: ''
+          maxLength: 32
+        address:
+          type: string
+          minLength: 1
+          maxLength: 255
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        demand:
+          type: number
+          format: double
+          minimum: 0
+          default: 1.0
+        service_minutes:
+          type: integer
+          minimum: 0
+          default: 5
+        scheduled_date:
+          type: string
+          format: date
+        notes:
+          type: string
+          default: ''
+      required:
+      - address
+      - customer_name
+      - depot
+      - latitude
+      - longitude
+    TokenObtainPair:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - refresh
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    TokenVerifyRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - token
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        full_name:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        phone:
+          type: string
+          readOnly: true
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+      required:
+      - email
+      - full_name
+      - id
+      - phone
+      - role
+      - username
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        depot:
+          type: integer
+        depot_name:
+          type: string
+          readOnly: true
+        code:
+          type: string
+          maxLength: 32
+        plate:
+          type: string
+          maxLength: 16
+        capacity:
+          type: number
+          format: double
+          minimum: 0.1
+          description: In the same unit as the stops' demand.
+        max_shift_minutes:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Max shift (min)
+        avg_speed_kmh:
+          type: number
+          format: double
+          title: Average speed (km/h)
+        is_active:
+          type: boolean
+          title: Active
+      required:
+      - capacity
+      - code
+      - depot
+      - depot_name
+      - id
+    VehicleRequest:
+      type: object
+      properties:
+        depot:
+          type: integer
+        code:
+          type: string
+          minLength: 1
+          maxLength: 32
+        plate:
+          type: string
+          maxLength: 16
+        capacity:
+          type: number
+          format: double
+          minimum: 0.1
+          description: In the same unit as the stops' demand.
+        max_shift_minutes:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          title: Max shift (min)
+        avg_speed_kmh:
+          type: number
+          format: double
+          title: Average speed (km/h)
+        is_active:
+          type: boolean
+          title: Active
+      required:
+      - capacity
+      - code
+      - depot
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+- name: Authentication
+  description: JWT tokens and the signed-in user. Everything else requires them.
+- name: Planning
+  description: The core. `routes/plan/` runs the VRP solver and persists the day's
+    plan; the rest reads back what it produced.
+- name: Deliveries
+  description: 'Creating and reading stops: the orders to be delivered.'
+- name: Driver app
+  description: 'What the Android app consumes, including the offline queue sync. That
+    sync is idempotent: resending the same batch duplicates nothing.'
+- name: Public tracking
+  description: No authentication. This is the link the end customer receives, rate
+    limited per IP and with personal data trimmed.
+- name: Fleet
+  description: 'Reference catalogues: depots, vehicles and drivers.'

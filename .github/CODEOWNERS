@@ -1,0 +1,10 @@
+# Everything, by default.
+*                       @ernestgonzalezv
+
+# The solver and its benchmarks are the core claim of this repo: a change here
+# moves numbers that the README publishes.
+/backend/optimizer/     @ernestgonzalezv
+/backend/tests/         @ernestgonzalezv
+
+# Infrastructure is never applied, so review is the only check it gets.
+/infra/                 @ernestgonzalezv

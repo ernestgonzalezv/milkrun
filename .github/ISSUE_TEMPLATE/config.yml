@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/ernestgonzalezv/milkrun/security/advisories/new
+    about: Report privately, never as a public issue.
+  - name: Design decisions
+    url: https://github.com/ernestgonzalezv/milkrun/tree/main/docs/adr
+    about: Most "why is it like this" questions are already answered in an ADR.

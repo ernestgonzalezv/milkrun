@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a change to what the project does
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: >
+        Whose problem, and what they do today instead. A feature without someone who needs it is
+        how a codebase grows weight it never pays back.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would build
+    validations:
+      required: true
+
+  - type: textarea
+    id: cost
+    attributes:
+      label: What it costs
+      description: >
+        Complexity, a dependency, a slower solve, a new failure mode. Every decision in this repo is
+        documented with its cost; this one should be too. "Nothing" is almost never the answer.
+    validations:
+      required: true
