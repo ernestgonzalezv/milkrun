@@ -1,0 +1,95 @@
+# Codemagic CI/CD — https://docs.codemagic.io/yaml/yaml-getting-started/
+#
+# GitHub Actions already covers the backend, the dashboard and Terraform. This
+# file exists for the one surface Actions serves badly: the Android app needs a
+# full SDK, a warm Gradle cache and, for a release, a keystore. Codemagic gives
+# all three out of the box.
+#
+# Two workflows on purpose:
+#   android-ci       every push. Tests, static analysis, debug APK.
+#   android-release  tags only. Signed AAB for the Play Store.
+#
+# The release workflow is inert until a signing keystore is uploaded, which is
+# deliberate: an unsigned release artifact is worse than no artifact.
+
+definitions:
+  base: &base
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      java: 17
+      vars:
+        GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false
+    cache:
+      cache_paths:
+        - $HOME/.gradle/caches
+        - $HOME/.gradle/wrapper
+
+  sdk_path: &sdk_path
+    name: Point Gradle at the SDK
+    # local.properties is gitignored, as it should be: it holds a machine path.
+    script: echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+
+workflows:
+  android-ci:
+    <<: *base
+    name: Android — tests, analysis, debug APK
+    triggering:
+      events: [push, pull_request]
+      branch_patterns:
+        - pattern: main
+          include: true
+        - pattern: "*"
+          include: true
+      cancel_previous_builds: true
+    scripts:
+      - *sdk_path
+      - name: Unit tests
+        script: cd android && ./gradlew testDebugUnitTest
+      - name: Static analysis
+        # Konsist runs inside the unit tests and fails the build if a feature
+        # module starts depending on another one.
+        script: cd android && ./gradlew detekt spotlessCheck lintDebug
+      - name: Debug APK
+        script: cd android && ./gradlew assembleDebug
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+      - android/**/build/reports/**/*.html
+      - android/**/build/test-results/**/*.xml
+    publishing:
+      email:
+        recipients:
+          - ernesto@cococel.com
+        notify:
+          success: false   # a green build every push is noise
+          failure: true
+
+  android-release:
+    <<: *base
+    name: Android — signed release bundle
+    triggering:
+      events: [tag]
+      tag_patterns:
+        - pattern: "v*"
+          include: true
+    environment:
+      java: 17
+      # Create this group in Codemagic and upload the keystore there. Until it
+      # exists this workflow cannot run, which is the intended behaviour.
+      groups:
+        - android_signing
+      android_signing:
+        - milkrun_keystore
+    scripts:
+      - *sdk_path
+      - name: Unit tests
+        script: cd android && ./gradlew testDebugUnitTest
+      - name: Release bundle
+        script: cd android && ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/**/*.aab
+      - android/app/build/outputs/**/mapping.txt
+    publishing:
+      email:
+        recipients:
+          - ernesto@cococel.com

@@ -1,0 +1,176 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Un push nuevo sobre la misma rama cancela la corrida anterior: no tiene
+# sentido gastar minutos en verificar un commit que ya quedo atras.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (ruff + pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: milkrun
+          POSTGRES_USER: milkrun
+          POSTGRES_PASSWORD: milkrun
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: backend/requirements-dev.txt
+
+      - name: Instalar dependencias
+        run: pip install -r requirements-dev.txt
+
+      - name: Estilo
+        run: ruff check .
+
+      - name: Migraciones al dia
+        # Si alguien cambia un modelo y no genera la migracion, esto falla
+        # aqui y no en el despliegue.
+        run: python manage.py makemigrations --check --dry-run
+        env:
+          DATABASE_URL: postgres://milkrun:milkrun@localhost:5432/milkrun
+
+      - name: Tests
+        run: pytest -q
+        env:
+          DATABASE_URL: postgres://milkrun:milkrun@localhost:5432/milkrun
+          DJANGO_SECRET_KEY: clave-de-ci
+          DJANGO_DEBUG: "1"
+
+      - name: El esquema OpenAPI se genera sin advertencias
+        run: python manage.py spectacular --fail-on-warn --file /dev/null
+        env:
+          DATABASE_URL: postgres://milkrun:milkrun@localhost:5432/milkrun
+
+      - name: Benchmark del optimizador
+        # No falla la build: es informativo, para ver la evolucion en el log.
+        run: python -m optimizer.benchmark --repeticiones 3
+
+  web:
+    name: Dashboard (oxlint + tsc + vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:run
+      - run: npm run build
+
+  android:
+    name: Android (lint + tests + APK)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Tests unitarios
+        run: ./gradlew testDebugUnitTest --no-daemon
+
+      - name: Lint de Android
+        run: ./gradlew lintDebug --no-daemon
+
+      - name: APK de depuracion
+        run: ./gradlew assembleDebug --no-daemon
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+  infra:
+    name: Infra (fmt + validate + tflint + checkov)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.5"
+          # Sin esto, el wrapper de la accion envuelve la salida y los codigos
+          # de error de terraform dejan de propagarse al job.
+          terraform_wrapper: false
+
+      - name: Formato
+        run: terraform fmt -check -recursive -diff
+
+      - name: Init sin backend
+        # -backend=false: no hace falta credencial ni bucket de estado para
+        # comprobar sintaxis y referencias. Este job corre sin tocar AWS.
+        run: terraform init -backend=false -input=false
+
+      - name: Validar
+        run: terraform validate
+
+      - uses: terraform-linters/setup-tflint@v5
+        with:
+          tflint_version: latest
+
+      - name: tflint
+        # Con el ruleset de AWS detecta lo que `validate` no ve: tipos de
+        # instancia que no existen, atributos invalidos, valores fuera de rango.
+        run: |
+          tflint --init
+          tflint --format compact
+
+      - uses: bridgecrewio/checkov-action@master
+        with:
+          directory: infra
+          framework: terraform
+          quiet: true
+          output_format: cli
+          # Las excepciones se justifican en infra/README.md, no se silencian
+          # a ciegas. Si aparece un hallazgo nuevo, el job falla a proposito.
+          skip_check: CKV_AWS_144,CKV_AWS_18,CKV_AWS_28,CKV_AWS_338
