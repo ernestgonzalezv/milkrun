@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">milkrun</string>
+
+    <string name="login_title">milkrun</string>
+    <string name="login_subtitle">Entrega del día</string>
+    <string name="login_username">Usuario</string>
+    <string name="login_password">Contraseña</string>
+    <string name="login_submit">Entrar</string>
+    <string name="login_demo_hint" tools:ignore="Typos">demo: chofer1 / milkrun</string>
+
+    <string name="route_title_empty">Mi ruta</string>
+    <string name="route_title">Ruta %1$s</string>
+    <string name="route_summary">%1$d de %2$d · %3$s km</string>
+    <plurals name="route_progress_description">
+        <item quantity="one">%1$d de %2$d parada cerrada</item>
+        <item quantity="other">%1$d de %2$d paradas cerradas</item>
+    </plurals>
+    <string name="route_refresh">Actualizar la ruta</string>
+    <string name="route_sign_out">Cerrar sesión</string>
+    <string name="route_empty_title">No hay ruta para hoy</string>
+    <string name="route_empty_body">Cuando el despacho planifique el día, aparece aquí.</string>
+    <string name="route_stop_eta">~%1$d min</string>
+    <string name="route_stop_leg">%1$s km</string>
+
+    <string name="stop_call">Llamar</string>
+    <string name="stop_navigate">Ir</string>
+    <string name="stop_reference">Guía %1$s · %2$s u.</string>
+    <string name="stop_mark_delivered">Marcar entregada</string>
+    <string name="stop_mark_failed">No se pudo entregar</string>
+    <string name="stop_failure_question">¿Por qué no se pudo?</string>
+    <string name="stop_failure_note">Nota (opcional)</string>
+    <string name="stop_back">Volver</string>
+    <string name="stop_confirm">Confirmar</string>
+    <string name="stop_closed">Esta parada ya está cerrada.</string>
+    <string name="stop_recorded_delivered">Entrega registrada.</string>
+    <string name="stop_recorded_failed">Marcada como no entregada.</string>
+
+    <string name="status_pending">Pendiente</string>
+    <string name="status_planned">Por entregar</string>
+    <string name="status_in_transit">En camino</string>
+    <string name="status_delivered">Entregada</string>
+    <string name="status_failed">No se pudo</string>
+    <string name="status_cancelled">Cancelada</string>
+
+    <string name="reason_absent">Cliente ausente</string>
+    <string name="reason_wrong_address">Dirección incorrecta</string>
+    <string name="reason_refused">Rechazó el pedido</string>
+    <string name="reason_no_access">Sin acceso al lugar</string>
+    <string name="reason_other">Otro</string>
+
+    <string name="error_no_internet">Sin conexión con el servidor. Revisa la red.</string>
+    <string name="error_network">El servidor no está respondiendo. Intenta de nuevo.</string>
+    <string name="error_unauthorized">Usuario o contraseña incorrectos.</string>
+    <string name="error_not_found">No encontramos lo que buscabas.</string>
+    <string name="error_business">El servidor rechazó la operación.</string>
+    <string name="error_unknown">Algo salió mal. Intenta de nuevo.</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- El tema real lo pone Compose. Este solo evita el flash blanco al
+         arrancar y fija el fondo antes del primer frame.
+
+         Se parte de un tema de plataforma y no de AppCompat porque la app no
+         usa AppCompat: la variante nocturna vive en values-night/, que es el
+         mecanismo del sistema y no necesita dependencia extra. -->
+    <style name="Theme.Milkrun" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/fondo</item>
+    </style>
+</resources>

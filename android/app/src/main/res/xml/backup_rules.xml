@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Equivalente de data_extraction_rules.xml para Android 11 y anteriores.
+     Hacen falta los dos archivos porque el mecanismo de respaldo cambio en
+     Android 12: `dataExtractionRules` solo lo lee desde ahi. -->
+<full-backup-content>
+    <exclude domain="root" />
+    <exclude domain="database" />
+    <exclude domain="sharedpref" />
+    <exclude domain="file" />
+</full-backup-content>

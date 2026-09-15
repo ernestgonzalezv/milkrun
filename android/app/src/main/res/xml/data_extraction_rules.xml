@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- No se respalda ni se transfiere nada.
+
+     La base local guarda entregas que todavia no llegaron al servidor y el
+     token de sesion del chofer. Restaurar eso en otro telefono reenviaria
+     trabajo ya hecho firmado por un dispositivo distinto, o dejaria una
+     sesion abierta donde no corresponde. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="file" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="file" />
+    </device-transfer>
+</data-extraction-rules>

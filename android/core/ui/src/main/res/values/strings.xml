@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_offline_idle">Sin conexión. Puedes seguir trabajando.</string>
+    <plurals name="sync_offline_pending">
+        <item quantity="one">Sin conexión. %d entrega guardada en el teléfono.</item>
+        <item quantity="other">Sin conexión. %d entregas guardadas en el teléfono.</item>
+    </plurals>
+    <plurals name="sync_pending">
+        <item quantity="one">%d entrega pendiente de enviar.</item>
+        <item quantity="other">%d entregas pendientes de enviar.</item>
+    </plurals>
+    <string name="sync_uploading">Enviando al servidor…</string>
+</resources>

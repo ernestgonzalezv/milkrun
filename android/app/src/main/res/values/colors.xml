@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Solo el fondo de la ventana antes del primer frame de Compose. El
+         resto de la paleta vive en ui/theme/Color.kt, donde la usa el tema. -->
+    <color name="fondo">#FFF7F8FA</color>
+</resources>
