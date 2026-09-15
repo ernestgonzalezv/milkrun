@@ -1,0 +1,45 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+db.sqlite3
+staticfiles/
+
+# Entorno: nunca se commitea. El ejemplo si, en backend/.env.example
+.env
+*.local
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+
+# Android
+# Glob patterns, not one line per module: every Gradle module has its own
+# build/ and .gradle/, and listing them by hand is how 3.000 build artifacts
+# end up in a first commit.
+**/build/
+**/.gradle/
+.kotlin/
+local.properties
+android/.idea/
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Claude Code, local overrides only. The shared config IS committed.
+.claude/settings.local.json
+
+# Editores y sistema
+.idea/
+.vscode/
+.DS_Store
+
+# Terraform
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.*
+infra/terraform.tfvars
