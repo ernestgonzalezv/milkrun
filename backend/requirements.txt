@@ -1,7 +1,7 @@
 # Dependencias de ejecucion. Solo lo que se importa directamente:
 # las transitivas las resuelve pip y no se fijan aqui a proposito, para que
 # los parches de seguridad entren sin editar este archivo.
-Django==5.2.17
+Django==6.1.1
 djangorestframework==3.18.1
 djangorestframework-simplejwt==5.5.1
 drf-spectacular==0.30.0
