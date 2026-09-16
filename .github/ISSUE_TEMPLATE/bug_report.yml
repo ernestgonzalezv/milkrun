@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Before filing: the README has a **Known limitations** section. If what you found is listed
-        there, it is a deliberate trade rather than a bug — though an argument for changing the
+        there, it is a deliberate trade rather than a bug, though an argument for changing the
         trade is welcome as a discussion.
 
   - type: dropdown

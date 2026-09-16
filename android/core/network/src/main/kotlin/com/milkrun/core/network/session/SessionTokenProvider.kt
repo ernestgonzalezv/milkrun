@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 /**
  * Read/write access to the stored session. It lives here because the Ktor `Auth` plugin needs
- * it, while the storage implementation belongs to `:core:storage` — so no feature module has to
+ * it, while the storage implementation belongs to `:core:storage`, so no feature module has to
  * depend on the storage layer just to know whether someone is signed in.
  */
 interface SessionTokenProvider {

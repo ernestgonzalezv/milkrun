@@ -22,9 +22,6 @@ fun MilkrunNavHost(startDestination: String, modifier: Modifier = Modifier) {
             LoginScreen(
                 onSignedIn = {
                     navController.navigate(Screen.Route.route) {
-                        // The login screen must not stay on the back stack: pressing back from
-                        // the route should leave the app, not ask again for credentials that
-                        // were already accepted.
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 },

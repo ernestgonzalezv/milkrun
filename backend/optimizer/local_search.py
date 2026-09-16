@@ -30,7 +30,7 @@ def two_opt(route: Sequence[int], matrix: DistanceMatrix) -> list[int]:
     """
     best = [DEPOT, *route, DEPOT]
     n = len(best)
-    if n <= 4:  # deposito + 2 paradas: no hay nada que invertir
+    if n <= 4:
         return list(route)
 
     for _ in range(MAX_PASSES):
@@ -73,14 +73,10 @@ def or_opt(route: Sequence[int], matrix: DistanceMatrix, max_segment: int = 3) -
                 )
                 for pos in range(1, len(remainder)):
                     if pos == start:
-                        continue  # volveria a dejarlo donde estaba
+                        continue
                     prev, nxt = remainder[pos - 1], remainder[pos]
                     for piece in (segment, segment[::-1]):
-                        added = (
-                            matrix(prev, piece[0])
-                            + matrix(piece[-1], nxt)
-                            - matrix(prev, nxt)
-                        )
+                        added = matrix(prev, piece[0]) + matrix(piece[-1], nxt) - matrix(prev, nxt)
                         if added - removed < -EPSILON:
                             best = remainder[:pos] + list(piece) + remainder[pos:]
                             improved = True

@@ -171,9 +171,7 @@ class FakeRouteRepository:
         return Page(items=tuple(items), total=len(items))
 
     def for_driver(self, driver_id: int, day: date) -> Route | None:
-        return next(
-            (r for r in self.routes if r.driver_id == driver_id and r.date == day), None
-        )
+        return next((r for r in self.routes if r.driver_id == driver_id and r.date == day), None)
 
     def statuses_for(self, depot_id: int, day: date) -> tuple[RouteStatus, ...]:
         return tuple(r.status for r in self.routes if r.depot_id == depot_id and r.date == day)

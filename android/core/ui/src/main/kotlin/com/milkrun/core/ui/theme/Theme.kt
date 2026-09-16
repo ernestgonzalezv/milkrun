@@ -46,8 +46,7 @@ private val DarkScheme = darkColorScheme(
 )
 
 /**
- * Material You dynamic colour is deliberately absent. Stop status is communicated by colour —
- * green delivered, red failed, blue pending — and letting the system rewrite the palette from
+ * Material You dynamic colour is deliberately absent. Stop status is communicated by colour, * green delivered, red failed, blue pending, and letting the system rewrite the palette from
  * the user's wallpaper breaks that code exactly where it matters most.
  */
 @Composable

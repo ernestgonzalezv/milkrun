@@ -7,7 +7,7 @@ paths:
 
 > **Enforced by Konsist** (`app/src/test/.../konsist/KonsistArchitectureTest.kt`): domain purity,
 > feature isolation, Koin-only DI, no LiveData, immutable ViewModel state, single-invoke use
-> cases, no DTOs in presentation. If a Konsist test fails, fix the code — never the test.
+> cases, no DTOs in presentation. If a Konsist test fails, fix the code, never the test.
 
 Clean Architecture per feature module with four layers: **presentation (`:app/presentation/`) →
 ViewModel → use case → repository → data source**. Never skip layers.
@@ -25,8 +25,7 @@ ViewModel → use case → repository → data source**. Never skip layers.
   Compose code.
 - **Domain has zero Android imports.** No `androidx.*`, no `android.*`, no Compose, no Koin, no
   Ktor, no Room. Pure Kotlin plus `kotlinx.coroutines.flow` and `java.time`.
-- **State via ViewModel + `StateFlow`.** No `LiveData`. No `mutableStateOf` owned by a ViewModel —
-  Compose state is screen-scoped only.
+- **State via ViewModel + `StateFlow`.** No `LiveData`. No `mutableStateOf` owned by a ViewModel. Compose state is screen-scoped only.
 - **DI via Koin** (`single`, `factory`, `viewModel`). No Hilt, no Dagger, no `@Inject`. Each
   feature exposes one `<Name>Module.kt` in `di/`; `:app` splits its graph across
   `di/{App,Network,ViewModel}Module.kt`.
@@ -57,7 +56,7 @@ ViewModel → use case → repository → data source**. Never skip layers.
 
 ## Use case conventions
 
-- One class per use case, single responsibility. `operator fun invoke(...)` — `Flow<Resource<T>>`
+- One class per use case, single responsibility. `operator fun invoke(...)`, `Flow<Resource<T>>`
   for streams, `suspend` for one-shot.
 - **No default parameter values.** A use case named `ObserveTodaysRouteUseCase` takes no date: it
   injects the `Clock`. Defaults that call into an injected collaborator make the class
@@ -76,5 +75,5 @@ ViewModel → use case → repository → data source**. Never skip layers.
 - `:feature:*` never depend on each other.
 - `:core:*` never depend on `:feature:*`.
 - Everything may depend on `:core:common`.
-- Use `api()` only for types that appear in a module's public contract — `:core:network` exposes
+- Use `api()` only for types that appear in a module's public contract, `:core:network` exposes
   `ktor-client-core` that way because repositories catch Ktor's exception types by design.

@@ -9,7 +9,7 @@
   For a stale Gradle state try `--rerun-tasks` before `clean`; `clean` costs a full rebuild.
 - `terraform apply` and `terraform destroy` are denied in `settings.json` on purpose. The AWS
   account is borrowed and the infra is not meant to run. If a task seems to need them, stop and
-  ask — do not look for a way around the deny rule.
+  ask, do not look for a way around the deny rule.
 
 ## When you are the one who was wrong
 

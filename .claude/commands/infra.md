@@ -13,7 +13,7 @@ tflint --init && tflint --format compact
 checkov -d . --framework terraform --quiet
 ```
 
-If a tool is missing, say so and skip that stage — do not silently pass. `brew install terraform
+If a tool is missing, say so and skip that stage, do not silently pass. `brew install terraform
 tflint` and `pip install checkov`.
 
 **`terraform apply` and `terraform destroy` are denied in `settings.json`.** The stack is written

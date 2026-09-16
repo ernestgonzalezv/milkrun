@@ -46,8 +46,6 @@ function initials(name: string): string {
 export function DashboardPage() {
   const { user, signOut } = useAuth()
   const [date, setDate] = useState(today)
-  // Remembered across reloads: a dispatcher works the same warehouse every
-  // morning, and re-picking it after every refresh is needless friction.
   const [depotId, setDepotId] = usePersistentState<number>('milkrun.depot', 0, (raw) => {
     const parsed = Number(raw)
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null
@@ -67,8 +65,6 @@ export function DashboardPage() {
 
   const unassigned = useMemo(() => stops.filter((s) => s.status === 'pending'), [stops])
 
-  // Escape backs out one level: first the focused stop, then the selected
-  // route. Dispatchers live on the keyboard and expect a way out.
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
       if (event.key !== 'Escape') return
@@ -82,8 +78,6 @@ export function DashboardPage() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  // The optimizer stores identical metrics on every route of the same plan, so
-  // reading the first one is enough.
   const metrics = routes.length > 0 ? (routesWithStops[0]?.optimizer_metrics ?? null) : null
 
   const planned = routes.length > 0

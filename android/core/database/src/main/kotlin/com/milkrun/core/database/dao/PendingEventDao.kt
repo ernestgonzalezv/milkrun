@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 interface PendingEventDao {
 
     /**
-     * IGNORE, not REPLACE: if the event is already queued the original row — with its real
-     * device timestamp and its retry history — is the one that matters.
+     * IGNORE, not REPLACE: if the event is already queued the original row, with its real
+     * device timestamp and its retry history, is the one that matters.
      */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun enqueue(event: PendingEventEntity): Long

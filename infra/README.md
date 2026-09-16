@@ -78,7 +78,7 @@ un incidente de la base se convertiria en una caida total. Ver
 `backend/apps/shared/health.py`.
 
 **HTTPS es condicional.** Sin dominio propio no hay certificado de ACM posible
-—la validacion exige demostrar control del DNS—, asi que el stack se queda en
+(la validacion exige demostrar control del DNS), asi que el stack se queda en
 HTTP y el output lo dice. El dashboard si tiene HTTPS: el certificado por
 defecto de `*.cloudfront.net` es valido y gratis.
 

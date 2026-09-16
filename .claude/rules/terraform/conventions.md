@@ -4,7 +4,7 @@ paths:
   - "infra/**/*.hcl"
 ---
 
-# Infra — Terraform sobre AWS
+# Infra. Terraform sobre AWS
 
 > **Este stack no esta aplicado en ninguna cuenta de AWS.** Se escribe y se valida sin
 > credenciales: `terraform fmt`, `terraform validate`, `tflint` con el ruleset de AWS y

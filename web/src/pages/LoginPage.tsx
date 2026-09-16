@@ -43,14 +43,14 @@ export function LoginPage() {
         <div className="signin__pitch">
           <h2>Every van leaves with the shortest day already planned.</h2>
           <p>
-            Four hundred stops across twenty-six vehicles, solved in under half a second — and the
+            Four hundred stops across twenty-six vehicles, solved in under half a second, and the
             driver keeps working when the signal drops.
           </p>
         </div>
 
         <div className="signin__stats">
           <div className="signin__stat">
-            <strong>16–22%</strong>
+            <strong>16 to 22%</strong>
             <span>fewer kilometres than manual routing</span>
           </div>
           <div className="signin__stat">

@@ -68,8 +68,11 @@ def test_la_linea_de_tiempo_llega_en_orden_cronologico(api, parada, drivers):
     ]
     for minutos, kind in cronologia:
         DeliveryEvent.objects.create(
-            stop=parada, driver=chofer, client_event_id=uuid.uuid4(),
-            kind=kind, occurred_at=ahora - timezone.timedelta(minutes=minutos),
+            stop=parada,
+            driver=chofer,
+            client_event_id=uuid.uuid4(),
+            kind=kind,
+            occurred_at=ahora - timezone.timedelta(minutes=minutos),
         )
 
     r = api.get(f"/api/v1/track/{parada.tracking_code}/")
@@ -86,8 +89,11 @@ def test_el_codigo_de_seguimiento_no_usa_caracteres_ambiguos(api, depot):
     """Se dicta por telefono: nada de O/0 ni I/1/L."""
     codigos = [
         Stop.objects.create(
-            depot=depot, customer_name=f"C{i}", address="X",
-            latitude=23.1, longitude=-82.3,
+            depot=depot,
+            customer_name=f"C{i}",
+            address="X",
+            latitude=23.1,
+            longitude=-82.3,
         ).tracking_code
         for i in range(30)
     ]
@@ -125,5 +131,4 @@ def test_el_estado_publico_sigue_la_proyeccion_de_la_bitacora(
 
     assert r.data["status"] == StopStatus.FAILED
     assert r.data["status_display"] == "Failed"
-    # El motivo del fallo es informacion interna: no se publica.
     assert "absent" not in str(r.data)

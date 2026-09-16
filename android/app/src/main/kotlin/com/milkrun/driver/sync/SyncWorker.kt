@@ -45,9 +45,6 @@ class SyncWorker(context: Context, parameters: WorkerParameters) :
     private val observeSession: ObserveSessionUseCase by inject()
 
     override suspend fun doWork(): Result {
-        // Without a session there is nothing to upload and no token to upload it with. Running
-        // anyway fires authenticated requests that can only 401, and each one drags the Auth
-        // plugin through a pointless refresh attempt.
         if (!observeSession().first()) return Result.success()
 
         val result = syncPendingWork().last()

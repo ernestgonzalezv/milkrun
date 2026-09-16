@@ -7,8 +7,6 @@ android {
     namespace = "com.milkrun.core.database"
 }
 
-// Room's schema is exported to a versioned JSON so migration tests can assert against the real
-// previous shape instead of a reconstruction from memory.
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }

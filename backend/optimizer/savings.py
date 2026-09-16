@@ -98,12 +98,11 @@ def clarke_wright(
         for idx, i in enumerate(stops)
         for j in stops[idx + 1 :]
     ]
-    # Desempate por indice para que el resultado sea reproducible bit a bit.
     savings.sort(key=lambda t: (-t[0], t[1], t[2]))
 
     for saving, i, j in savings:
         if saving <= 0:
-            break  # a partir de aqui fusionar alarga el recorrido
+            break
         if rs.owner[i] == rs.owner[j]:
             continue
         if not (rs.is_endpoint(i) and rs.is_endpoint(j)):
@@ -164,7 +163,7 @@ def consolidate(
                     if best is None or added < best[0]:
                         best = (added, a, b, candidate)
         if best is None:
-            break  # ninguna fusion es factible: el llamador marca el sobrante
+            break
         _, a, b, merged = best
         routes = [r for k, r in enumerate(routes) if k not in (a, b)]
         routes.append(merged)

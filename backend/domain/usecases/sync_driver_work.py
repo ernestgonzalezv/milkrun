@@ -28,7 +28,7 @@ class SyncDriverEvents:
     Un reenvio de la misma cola no crea duplicados ni devuelve error: la
     restriccion unica sobre (chofer, client_event_id) hace el trabajo y aqui
     solo se cuenta. Es lo que permite que la app aplique la politica mas
-    simple posible —reintentar hasta 2xx— sin logica de reconciliacion.
+    simple posible ,reintentar hasta 2xx, sin logica de reconciliacion.
     """
 
     def __init__(
@@ -63,7 +63,9 @@ class SyncDriverEvents:
 
         logger.info(
             "sync del chofer %s: %d nuevos, %d duplicados",
-            driver_id, len(created), len(duplicates),
+            driver_id,
+            len(created),
+            len(duplicates),
         )
         return SyncReport(
             created=len(created),

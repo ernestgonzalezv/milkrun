@@ -37,13 +37,11 @@ internal abstract class MilkrunDatabase : RoomDatabase() {
 /**
  * The only public surface of this module.
  *
- * Room itself — `RoomDatabase`, the builder, the generated implementation — stays internal, so
+ * Room itself, `RoomDatabase`, the builder, the generated implementation, stays internal, so
  * no other module ends up with Room on its compile classpath just to reach a DAO.
  */
 class MilkrunDatabaseProvider(context: Context) {
 
-    // No `fallbackToDestructiveMigration`. This database holds deliveries that have not reached
-    // the server; wiping it on an app update would destroy a driver's work.
     private val database: MilkrunDatabase =
         Room.databaseBuilder(context, MilkrunDatabase::class.java, "milkrun.db").build()
 

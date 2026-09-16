@@ -48,7 +48,6 @@ describe('cliente de la API', () => {
     expect(resultado.username).toBe('marta')
     expect(tokens.access).toBe('nuevo')
     expect(fetchSpy).toHaveBeenCalledTimes(3)
-    // El reintento tiene que llevar el token nuevo, no el vencido.
     const [, ultima] = fetchSpy.mock.calls[2]
     const cabecerasReintento = (ultima as RequestInit).headers as Record<string, string>
     expect(cabecerasReintento.Authorization).toBe('Bearer nuevo')
@@ -65,9 +64,6 @@ describe('cliente de la API', () => {
   })
 
   it('renueva una sola vez aunque varias peticiones fallen a la vez', async () => {
-    // Es el caso real: el dashboard dispara tres consultas al cargar y las
-    // tres reciben 401. Como el backend rota el refresh token, tres refresh
-    // simultaneos invalidarian los dos ultimos.
     tokens.save({ access: 'vencido', refresh: 'refresh-bueno' })
     let refrescos = 0
     vi.spyOn(globalThis, 'fetch').mockImplementation(async (url, opciones) => {

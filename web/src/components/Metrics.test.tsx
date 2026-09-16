@@ -58,16 +58,12 @@ describe('metrics panel', () => {
   it('leads with the kilometres the plan saved', () => {
     render(<Metrics metrics={BASE} routes={[route(1, 1, 200, 50)]} vehicles={FLEET} unassigned={0} />)
 
-    // 349 manual - 273.4 planned = 75.6, truncated to 75: the tile that
-    // justifies the product rounds against itself, never in its favour.
     expect(screen.getByText('75 km')).toBeInTheDocument()
     expect(screen.getByText('−21.6% vs manual routing')).toBeInTheDocument()
     expect(screen.getByText('273.4 km')).toBeInTheDocument()
   })
 
   it('shows a worse-than-manual plan without dressing it up', () => {
-    // A panel that only renders good numbers is useless for deciding anything:
-    // if the plan came out worse than manual routing, it has to be visible.
     render(
       <Metrics
         metrics={{ ...BASE, improvement_vs_nearest_neighbor_pct: -3.4, total_km: 361 }}
@@ -96,7 +92,6 @@ describe('metrics panel', () => {
   })
 
   it('reports the longest shift, not the average one', () => {
-    // An average would hide the single route that breaks the day.
     render(
       <Metrics
         metrics={BASE}
@@ -120,7 +115,6 @@ describe('metrics panel', () => {
       />,
     )
 
-    // 460 of 480 minutes: under half an hour of slack left.
     expect(container.querySelectorAll('.metric--alert')).toHaveLength(1)
   })
 
@@ -139,8 +133,6 @@ describe('metrics panel', () => {
   })
 
   it('never rounds a nearly full van up to 100%', () => {
-    // 99.7% displayed as 100% would say the van is full when an order still
-    // fits, which is the exact question this tile exists to answer.
     render(
       <Metrics
         metrics={BASE}
@@ -157,6 +149,6 @@ describe('metrics panel', () => {
   it('does not break before a plan exists', () => {
     render(<Metrics metrics={null} routes={[]} vehicles={[]} unassigned={0} />)
 
-    expect(screen.getAllByText('—')).toHaveLength(2)
+    expect(screen.getAllByText(',')).toHaveLength(2)
   })
 })

@@ -27,8 +27,6 @@ from apps.fleet.views import DepotViewSet, DriverProfileViewSet, VehicleViewSet
 from apps.routing.views import MyRouteView, PlanDayView, RouteDetailView, RouteListView
 from apps.shared.health import healthz, readyz
 
-# Los catalogos de flota son CRUD sobre datos de referencia, sin regla de
-# negocio: se dejan como ViewSets del ORM a proposito. Ver docs/adr/0007.
 router = DefaultRouter()
 router.register("depots", DepotViewSet, basename="depot")
 router.register("vehicles", VehicleViewSet, basename="vehicle")
@@ -52,8 +50,6 @@ api_v1 = [
 ]
 
 urlpatterns = [
-    # Fuera de /api/v1/ a proposito: las sondas no son parte del contrato
-    # publico y no deben versionarse con el.
     path("healthz", healthz, name="healthz"),
     path("readyz", readyz, name="readyz"),
     path("admin/", admin.site.urls),

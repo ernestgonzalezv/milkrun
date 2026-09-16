@@ -10,7 +10,7 @@ Never report work as done without proving it ran. The loop is
 | Backend | `pytest` green + `ruff check .` clean + the schema generates without warnings |
 | Dashboard | `npm run test:run`, `npm run typecheck`, `npm run lint`, `npm run build` |
 | Android | `./gradlew testDebugUnitTest detekt spotlessCheck lintDebug assembleDebug` |
-| Anything user-visible | run it and look at it — install the APK, open the screen, read the log |
+| Anything user-visible | run it and look at it, install the APK, open the screen, read the log |
 
 ## Rules
 

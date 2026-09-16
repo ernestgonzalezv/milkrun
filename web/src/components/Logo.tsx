@@ -3,7 +3,7 @@
  *
  * The glyph is the product: a route that leaves an origin node, turns, and
  * lands on a destination. It also happens to trace an "L". Drawn on a 32-unit
- * grid so it stays crisp at favicon size — the stroke widths are chosen to
+ * grid so it stays crisp at favicon size, the stroke widths are chosen to
  * survive 16px, which is where most marks fall apart.
  */
 
@@ -16,10 +16,6 @@ interface MarkProps {
 }
 
 export function LogoMark({ size = 32, flat = false }: MarkProps) {
-  // Gradient ids must be unique per instance or the second mark on the page
-  // inherits the first one's fill and silently renders the wrong colours.
-  // The colons useId produces are stripped: they are legal in an id but break
-  // the `url(#...)` reference in some engines.
   const id = `lt-grad-${useId().replace(/:/g, '')}`
 
   return (

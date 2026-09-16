@@ -29,7 +29,8 @@ from domain.entities import DeliveryEvent as DomainEvent
 from domain.values import EventKind as DomainEventKind
 from domain.values import FailureReason as DomainFailureReason
 
-DEMO_PASSWORD = "milkrun"  # solo datos de demo; nunca se usa en produccion
+DEMO_PASSWORD = "milkrun"
+
 
 class Command(BaseCommand):
     help = "Creates a depot, fleet, drivers and sample stops for one of the demo cities."
@@ -87,9 +88,6 @@ class Command(BaseCommand):
 
         paradas = self._stops(depot, city, dia, options["stops"], rng)
 
-        # La flota se dimensiona DESPUES de conocer la demanda del dia, que es
-        # el orden en que pasa en la realidad: el despachador sabe cuanto tiene
-        # que mover y contrata capacidad para eso.
         demanda = sum(p.demand for p in paradas)
         vehiculos = self._vehicles(depot, city, options["vehicles"], demanda, options["coverage"])
         self._dispatcher()
@@ -106,7 +104,7 @@ class Command(BaseCommand):
         capacidad = sum(v.capacity for v in vehiculos)
         demanda_total = sum(p.demand for p in paradas)
 
-        self.stdout.write(self.style.SUCCESS(f"\n  {city.label} — {depot.name}"))
+        self.stdout.write(self.style.SUCCESS(f"\n  {city.label}, {depot.name}"))
         self.stdout.write(f"  {depot.address}")
         self.stdout.write(
             f"  Fleet: {len(vehiculos)} vehicles "
@@ -121,9 +119,7 @@ class Command(BaseCommand):
                 f"{metricas['improvement_vs_nearest_neighbor_pct']:.1f}% better than manual routing"
             )
             if plan.unassigned:
-                self.stdout.write(
-                    self.style.WARNING(f"  Unassigned: {len(plan.unassigned)} stops")
-                )
+                self.stdout.write(self.style.WARNING(f"  Unassigned: {len(plan.unassigned)} stops"))
         self.stdout.write(
             f"\n  Dispatcher:  dispatch / {DEMO_PASSWORD}"
             f"\n  Driver:      driver-{city.key}-1 / {DEMO_PASSWORD}"
@@ -147,8 +143,6 @@ class Command(BaseCommand):
             paradas = list(ruta.stops)
             cuantas = int(len(paradas) * min(max(fraccion, 0.0), 1.0))
             for indice, route_stop in enumerate(paradas[:cuantas]):
-                # Una de cada ocho entregas falla: sin fallos la demo no
-                # ensena la mitad de los estados de la interfaz.
                 fallo = rng.random() < 0.125
                 eventos(
                     ruta.driver_id,
@@ -194,8 +188,6 @@ class Command(BaseCommand):
         vehiculos = []
         for k, peso in enumerate(pesos):
             es_moto = peso == 1.0
-            # The code carries the city: vehicle codes are globally unique, so
-            # seeding a second city would otherwise reuse the first one's fleet.
             codigo = f"{city.code}-{'MOT' if es_moto else 'VAN'}-{k + 1:02d}"
             vehiculo, creado = Vehicle.objects.get_or_create(
                 code=codigo,
@@ -254,7 +246,6 @@ class Command(BaseCommand):
         paradas = []
         for _ in range(cantidad):
             zona = rng.choice(city.zones)
-            # Scatter within the neighbourhood, not across the city: ~300 m.
             paradas.append(
                 Stop(
                     depot=depot,

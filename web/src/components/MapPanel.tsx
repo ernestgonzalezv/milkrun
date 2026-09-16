@@ -18,9 +18,9 @@ import { routeColor } from './palette'
 /**
  * Base map style.
  *
- * OpenFreeMap: vector, no API key, no rate limit, and — the reason it is the
- * default rather than Carto — it serves the style, the tiles, the sprite and
- * the glyphs from a single origin. Carto splits them across
+ * OpenFreeMap: vector, no API key, no rate limit. It is the default rather
+ * than Carto because it serves the style, the tiles, the sprite and the glyphs
+ * from a single origin. Carto splits them across
  * `basemaps.cartocdn.com` and `tiles.basemaps.cartocdn.com`, and `cartocdn.com`
  * appears in several ad-blocking filter lists because Carto also sells
  * analytics. A blocked request there does not fail: it hangs, with no error
@@ -44,7 +44,7 @@ const STYLE_TIMEOUT_MS = 6_000
  *
  * A style with a single background layer and no sources fetches nothing: no
  * tiles, no sprite, no glyph ranges. The routes and markers are GeoJSON and DOM
- * elements, so they draw regardless — which means panning, zooming and clicking
+ * elements, so they draw regardless, which means panning, zooming and clicking
  * a stop all keep working with the connection down. Street context is the only
  * thing lost, and that is worth far less than the plan itself.
  *
@@ -90,8 +90,7 @@ function markerElement(color: string, text: string, depot = false): HTMLElement 
  * Returns why WebGL 2 is unavailable, or null when it works.
  *
  * MapLibre 5+ requires WebGL 2 and throws from the constructor without it.
- * Checking first turns a blank panel into a sentence the user can act on —
- * a map area that renders nothing looks identical to a map area that is
+ * Checking first turns a blank panel into a sentence the user can act on, * a map area that renders nothing looks identical to a map area that is
  * simply empty, which is the worst possible failure mode.
  */
 let webglAnswer: string | null | undefined
@@ -119,8 +118,6 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
   const container = useRef<HTMLDivElement>(null)
   const map = useRef<MapLibreMap | null>(null)
   const markers = useRef<Marker[]>([])
-  // The WebGL probe is a pure question about the environment, so it is
-  // answered once while initialising state instead of from an effect.
   const [phase, setPhase] = useState<Phase>(() => {
     const problem = webglProblem()
     return problem
@@ -130,8 +127,6 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
   const [basemap, setBasemap] = useState<Basemap>({ kind: 'remote' })
   const [redraws, setRedraws] = useState(0)
 
-  // The map is created once. Recreating it on every render is the number one
-  // cause of memory leaks with MapLibre in React.
   useEffect(() => {
     if (!container.current || map.current) return
     if (webglProblem()) return
@@ -141,14 +136,11 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
       instance = new MapLibreMap({
         container: container.current,
         style: STYLE,
-        center: [-82.3666, 23.1136], // Havana
+        center: [-82.3666, 23.1136],
         zoom: 10.5,
         attributionControl: { compact: true },
       })
     } catch (error) {
-      // Reporting a failure of the external system this effect exists to set
-      // up is precisely what the rule carves out; there is no render-time
-      // value to derive from a constructor that threw.
       // oxlint-disable-next-line react/set-state-in-effect
       setPhase({
         kind: 'failed',
@@ -166,16 +158,10 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
       setPhase({ kind: 'ready' })
     }
 
-    // Swapping the style wipes every source and layer, so the draw effect has
-    // to run again afterwards. Flipping `phase` back through 'ready' is what
-    // retriggers it.
     const fallBackToOffline = (reason: string) => {
       if (settled) return
       settled = true
       setBasemap({ kind: 'offline', reason })
-      // `styledata` fires while the new style is still settling, and
-      // getStyle() throws on a style that is not done loading. Waiting for
-      // isStyleLoaded() is what makes the redraw safe.
       const whenLoaded = () => {
         if (!instance.isStyleLoaded()) return
         instance.off('styledata', whenLoaded)
@@ -187,10 +173,6 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
 
     instance.on('load', ready)
 
-    // A WebGL context can be lost after it was created: the GPU process
-    // restarts, the driver resets, or the browser reclaims it. Every network
-    // request still succeeds and the canvas simply goes blank — which is
-    // indistinguishable from a map with no data unless it is reported.
     const canvas = instance.getCanvas()
     const onContextLost = (event: Event) => {
       event.preventDefault()
@@ -206,24 +188,15 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
 
     instance.on('error', (event: ErrorEvent) => {
       const message = String(event.error?.message ?? 'unknown error')
-      // Individual tiles fail all the time; that must never blank a map that
-      // is already drawing. Only a failure before first load is fatal.
       if (settled) return
       fallBackToOffline(message)
     })
 
-    // A style request that never resolves fires no error event at all, which is
-    // exactly the case that used to leave the panel blank with nothing to say.
     const timer = window.setTimeout(
       () => fallBackToOffline(`no response in ${STYLE_TIMEOUT_MS / 1000}s`),
       STYLE_TIMEOUT_MS,
     )
 
-    // MapLibre measures its container once, on construction. This component is
-    // loaded lazily inside a Suspense boundary, so that measurement can land
-    // while the panel is still 0x0 — and a zero-sized canvas paints nothing,
-    // reports no error, and looks exactly like a map that simply has no data.
-    // The observer re-measures whenever the panel actually gets its size.
     const observer = new ResizeObserver(() => instance.resize())
     observer.observe(container.current)
 
@@ -238,21 +211,16 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
     }
   }, [])
 
-  // Redraw routes and markers whenever the data changes.
   useEffect(() => {
     const instance = map.current
     if (!instance || phase.kind !== 'ready') return
 
-    // Belt and braces: any path that reaches here before the style is settled
-    // would throw on the first getStyle() below. Retry once the map goes idle.
     if (!instance.isStyleLoaded()) {
       const retry = () => {
         instance.off('idle', retry)
         setRedraws((n) => n + 1)
       }
       instance.on('idle', retry)
-      // Braces matter: `off` returns the map, and an effect cleanup must
-      // return nothing.
       return () => {
         instance.off('idle', retry)
       }
@@ -295,7 +263,6 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
       ])
       if (points.length === 0) return
 
-      // The route leaves the depot and comes back, which is why the line closes there.
       const line: [number, number][] = depot
         ? [[depot.longitude, depot.latitude], ...points, [depot.longitude, depot.latitude]]
         : points
@@ -354,8 +321,6 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
 
     instance.flyTo({
       center: [focus.longitude, focus.latitude],
-      // Not a fixed zoom: yanking the dispatcher from a city overview down to
-      // street level loses all context. Only zoom in if we are further out.
       zoom: Math.max(instance.getZoom(), 15),
       duration: 700,
       essential: true,
@@ -399,7 +364,7 @@ export function MapPanel({ depot, routes, highlighted, focus }: Props) {
       {/* Not an error state. The plan is fully usable without street context,
           so this is a note, not a blocker. */}
       {phase.kind === 'ready' && basemap.kind === 'offline' && (
-        <div className="map__note" title={`${STYLE} — ${basemap.reason}`}>
+        <div className="map__note" title={`${STYLE}, ${basemap.reason}`}>
           <span className="map__note-dot" aria-hidden="true" />
           Offline basemap · streets unavailable
         </div>

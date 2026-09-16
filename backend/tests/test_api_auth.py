@@ -44,8 +44,11 @@ def test_un_chofer_no_puede_crear_paradas(as_driver, depot):
     r = as_driver.post(
         "/api/v1/stops/",
         {
-            "depot": depot.id, "customer_name": "X", "address": "Y",
-            "latitude": 23.1, "longitude": -82.3,
+            "depot": depot.id,
+            "customer_name": "X",
+            "address": "Y",
+            "latitude": 23.1,
+            "longitude": -82.3,
         },
         format="json",
     )

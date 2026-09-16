@@ -33,25 +33,13 @@ from .geo import DistanceMatrix
 from .models import Vehicle
 from .savings import DEPOT
 
-#: OR-Tools trabaja con enteros. Las distancias van en metros y los tiempos en
-#: segundos: con esa resolucion el error de redondeo es despreciable frente al
-#: factor de rodeo de 1.35, que ya es una estimacion.
 METROS_POR_KM = 1000
 SEGUNDOS_POR_MINUTO = 60
 
-#: La demanda es float (1.0, 2.5...). Se escala a centesimas para que la
-#: dimension de capacidad pueda ser entera sin perder precision util.
 ESCALA_DEMANDA = 100
 
-#: Presupuesto por defecto. Con 400 paradas, mas tiempo sigue mejorando pero
-#: con rendimientos decrecientes; 5 s deja la comparacion estable.
 LIMITE_SEGUNDOS = 5.0
 
-#: Estrategia de solucion inicial. Es un parametro y no una constante escondida
-#: porque cambia el resultado: OR-Tools construye una primera solucion y luego
-#: la mejora, asi que un arranque distinto puede terminar en otro optimo local.
-#: SAVINGS es el mismo Clarke-Wright que usa el solver propio, y es la que hace
-#: la comparacion justa; PATH_CHEAPEST_ARC es el defecto de la libreria.
 ESTRATEGIA_INICIAL = "PATH_CHEAPEST_ARC"
 
 
@@ -97,7 +85,6 @@ def ortools_reference(
     manager = pywrapcp.RoutingIndexManager(nodos, len(vehicles), DEPOT)
     routing = pywrapcp.RoutingModel(manager)
 
-    # --- Objetivo: kilometros ---------------------------------------------
     def distancia_m(desde: int, hasta: int) -> int:
         i = manager.IndexToNode(desde)
         j = manager.IndexToNode(hasta)
@@ -106,7 +93,6 @@ def ortools_reference(
     idx_distancia = routing.RegisterTransitCallback(distancia_m)
     routing.SetArcCostEvaluatorOfAllVehicles(idx_distancia)
 
-    # --- Restriccion de capacidad -----------------------------------------
     def demanda(desde: int) -> int:
         nodo = manager.IndexToNode(desde)
         return round(demands.get(nodo, 0.0) * ESCALA_DEMANDA)
@@ -114,19 +100,12 @@ def ortools_reference(
     idx_demanda = routing.RegisterUnaryTransitCallback(demanda)
     routing.AddDimensionWithVehicleCapacity(
         idx_demanda,
-        0,  # sin holgura: la carga no se puede "soltar" a mitad de ruta
+        0,
         [round(v.capacity * ESCALA_DEMANDA) for v in vehicles],
-        True,  # empezar la cuenta en cero al salir del deposito
+        True,
         "Capacidad",
     )
 
-    # --- Restriccion de jornada -------------------------------------------
-    #
-    # Un callback por vehiculo porque la velocidad puede variar entre ellos:
-    # con flota mixta (motos y camionetas) el mismo tramo cuesta tiempos
-    # distintos. El tiempo de servicio se cobra en el nodo de ORIGEN, que es
-    # la convencion que hace que el acumulado al volver al deposito sea la
-    # duracion total de la ruta.
     def hacer_tiempo(velocidad_kmh: float):
         def tiempo_s(desde: int, hasta: int) -> int:
             i = manager.IndexToNode(desde)
@@ -142,24 +121,17 @@ def ortools_reference(
     ]
     routing.AddDimensionWithVehicleTransitAndCapacity(
         indices_tiempo,
-        0,  # sin esperas permitidas
+        0,
         [round(v.max_shift_minutes * SEGUNDOS_POR_MINUTO) for v in vehicles],
         True,
         "Jornada",
     )
 
-    # --- Permitir dejar paradas sin servir --------------------------------
-    #
-    # Con flota saturada no cabe todo, y sin esto el modelo seria infactible y
-    # OR-Tools devolveria None en vez de la mejor solucion parcial. La
-    # penalizacion se fija por encima del coste de dedicarle un vehiculo entero
-    # a una sola parada, para que dejarla fuera solo ocurra si de verdad no cabe.
     ida_y_vuelta_mas_cara = max(matrix(DEPOT, i) for i in range(1, nodos)) * 2
     penalizacion = round(ida_y_vuelta_mas_cara * METROS_POR_KM) * 10
     for nodo in range(1, nodos):
         routing.AddDisjunction([manager.NodeToIndex(nodo)], penalizacion)
 
-    # --- Busqueda ----------------------------------------------------------
     parametros = pywrapcp.DefaultRoutingSearchParameters()
     try:
         parametros.first_solution_strategy = getattr(
@@ -176,13 +148,6 @@ def ortools_reference(
     if solucion is None:
         return BaselineResult(routes=(), total_km=0.0, served=0)
 
-    # --- Lectura del resultado ---------------------------------------------
-    #
-    # Los kilometros se recalculan con `matrix.path_km`, el MISMO metodo que usa
-    # el solver propio, y no con el objetivo interno de OR-Tools. Ese objetivo
-    # esta en metros redondeados e incluye las penalizaciones por parada no
-    # servida: compararlo contra kilometros reales seria comparar dos cosas
-    # distintas.
     rutas: list[tuple[int, ...]] = []
     for vehiculo in range(len(vehicles)):
         indice = routing.Start(vehiculo)

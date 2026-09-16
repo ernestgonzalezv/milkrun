@@ -16,7 +16,7 @@ The second half is the one that gets skipped.
 
 - **Constraints are real.** Capacity, `max_shift_minutes` and speed must hold on every produced
   route, not on average. The planner uses the slowest vehicle and the largest capacity per round
-  on purpose — worst case, so a route does not depend on which truck it lands on.
+  on purpose, worst case, so a route does not depend on which truck it lands on.
 - **Nothing mutates its input.** Every dataclass in `models.py` is frozen so the same instance
   can be re-solved and compared. A change that mutates breaks reproducibility silently.
 - **Determinism.** Same input, same plan. If a result varies between runs, find the set or dict
@@ -25,7 +25,7 @@ The second half is the one that gets skipped.
   optimise distance and leave stops unserved. Serving one more delivery is usually worth more
   than saving 2 km. A change that lowers distance by dropping stops is a regression.
 
-## Benchmark honesty — the part that matters
+## Benchmark honesty, the part that matters
 
 - **Every published number came from a command run in this session.** Never carry a figure
   forward from the README after touching the code that produces it.
@@ -44,4 +44,4 @@ The second half is the one that gets skipped.
 ## Output
 
 Say whether the algorithm is correct, whether the measurement is honest, and which README lines
-must change. Those are three separate verdicts — a correct change with a stale table is not done.
+must change. Those are three separate verdicts, a correct change with a stale table is not done.

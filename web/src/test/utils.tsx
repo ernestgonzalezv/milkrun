@@ -8,8 +8,6 @@ import { AuthProvider } from '../auth/AuthProvider'
 
 export function testClient(): QueryClient {
   return new QueryClient({
-    // No retries and no cache between tests: a failing test has to fail fast
-    // and for its own reason, not because of what the previous one left behind.
     defaultOptions: { queries: { retry: false, gcTime: 0, staleTime: 0 } },
   })
 }

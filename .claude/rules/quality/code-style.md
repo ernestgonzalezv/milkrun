@@ -13,17 +13,23 @@ paths:
 |---|---|---|
 | Kotlin | detekt + spotless + ktlint 1.7.0 | 120 |
 | Python | ruff (E, F, I, N, UP, B, C4, SIM, RUF, DJ) | 100 |
-| TypeScript | oxlint + `tsc --noEmit` | — |
+| TypeScript | oxlint + `tsc --noEmit` | n/a |
 
 ## Comments
 
-- **Default: no comments.** Code should read top to bottom.
-- Add one ONLY when the *why* is non-obvious: a hidden constraint, an upstream API quirk, a
-  workaround tied to a specific bug, or behaviour that would surprise the reader.
-- Never narrate *what* the code does — the names already say it.
+- **No line comments.** No `#` in Python or HCL, no `//` in Kotlin or TypeScript. If a line needs
+  explaining, the names are wrong or the function is doing too much.
+- **Docstrings and doc blocks stay.** Python `"""`, TypeScript `/** */` and Kotlin KDoc describe
+  what a unit is for and what it guarantees. `drf-spectacular` also builds the API documentation
+  from them, so removing one degrades `/api/docs/`.
+- Directives are not comments and stay: `# noqa`, `# type:`, `// oxlint-disable`, `// @ts-`,
+  `# checkov:skip`.
+- Never narrate *what* the code does, the names already say it.
 - Never reference the current task or its callers ("used by X", "added for the Y flow"). That
   belongs in the PR description.
 - No section-header comment blocks. If a file needs dividers, it needs splitting.
+- **No em dashes anywhere**, in code, docs or commit messages. Use a comma, a colon, a full stop
+  or parentheses.
 
 ## Forbidden
 

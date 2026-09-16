@@ -22,7 +22,6 @@ from domain.errors import (
 )
 from domain.ports import Page
 
-#: Que codigo HTTP le corresponde a cada rechazo del negocio.
 DOMAIN_STATUS = {
     PlanningError: status.HTTP_409_CONFLICT,
     StopNotFoundError: status.HTTP_404_NOT_FOUND,

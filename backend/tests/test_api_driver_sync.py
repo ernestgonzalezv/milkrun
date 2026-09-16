@@ -135,7 +135,6 @@ def test_los_eventos_desordenados_se_resuelven_por_hora_del_dispositivo(ruta_del
     reciente = _evento(parada["id"], "delivered")
     reciente["occurred_at"] = ahora.isoformat()
 
-    # Se envian en el orden equivocado a proposito.
     cliente.post("/api/v1/me/events/", {"events": [reciente]}, format="json")
     cliente.post("/api/v1/me/events/", {"events": [tardio]}, format="json")
 

@@ -67,8 +67,12 @@ class TestPlanificarElDia:
         self.routes = FakeRouteRepository(routes)
         self.uow = FakeUnitOfWork()
         self.planner = FakePlanner(
-            plan_result or PlanResult(routes=(planned(1, *[s.id for s in stops]),),
-                                      unassigned_stop_ids=(), metrics={"total_km": 12.5})
+            plan_result
+            or PlanResult(
+                routes=(planned(1, *[s.id for s in stops]),),
+                unassigned_stop_ids=(),
+                metrics={"total_km": 12.5},
+            )
         )
         return PlanDay(
             fleet=FakeFleetRepository(
@@ -141,9 +145,7 @@ class TestPlanificarElDia:
         resultado_planificador = PlanResult(
             routes=(planned(1, 1),), unassigned_stop_ids=(2,), metrics={}
         )
-        plan_day = self._caso(
-            stops=[parada(1), parada(2)], plan_result=resultado_planificador
-        )
+        plan_day = self._caso(stops=[parada(1), parada(2)], plan_result=resultado_planificador)
 
         resultado = plan_day(depot_id=1, day=HOY)
 
@@ -151,8 +153,9 @@ class TestPlanificarElDia:
         assert self.stops.stops[2].status is StopStatus.PENDING
 
     def test_prefiere_al_chofer_habitual_del_vehiculo(self):
-        habitual = Driver(id=7, username="chofer7", full_name="Chofer Siete", depot_id=1,
-                          default_vehicle_id=1)
+        habitual = Driver(
+            id=7, username="chofer7", full_name="Chofer Siete", depot_id=1, default_vehicle_id=1
+        )
         otro = Driver(id=8, username="chofer8", full_name="Chofer Ocho", depot_id=1)
         plan_day = self._caso(stops=[parada(1)], drivers=[otro, habitual])
 
@@ -272,8 +275,12 @@ class TestSeguimientoPublico:
         for kind, minutos in cronologia:
             events.append(
                 DeliveryEvent(
-                    id=None, stop_id=1, driver_id=3, client_event_id=uuid4(),
-                    kind=kind, occurred_at=AHORA - timedelta(minutes=minutos),
+                    id=None,
+                    stop_id=1,
+                    driver_id=3,
+                    client_event_id=uuid4(),
+                    kind=kind,
+                    occurred_at=AHORA - timedelta(minutes=minutos),
                 )
             )
 

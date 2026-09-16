@@ -23,11 +23,6 @@ class MeView(RetrieveAPIView):
         return self.request.user
 
 
-# Las vistas de simplejwt se envuelven solo para etiquetarlas. Sin esto caen en
-# un grupo "api" generico al final del Swagger, que es justo donde nadie busca
-# lo primero que necesita para probar la API.
-
-
 @extend_schema(
     tags=["Authentication"],
     summary="Obtain the token pair",

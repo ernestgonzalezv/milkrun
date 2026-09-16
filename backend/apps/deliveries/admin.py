@@ -6,7 +6,7 @@ from .models import DeliveryEvent, LocationPing, Stop
 class DeliveryEventInline(admin.TabularInline):
     model = DeliveryEvent
     extra = 0
-    can_delete = False  # la bitacora es append-only tambien desde el admin
+    can_delete = False
     readonly_fields = ("kind", "reason", "note", "driver", "occurred_at", "received_at")
 
     def has_add_permission(self, request, obj=None) -> bool:

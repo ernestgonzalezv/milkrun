@@ -118,10 +118,7 @@ def route_stop_to_entity(model: RouteStopModel, *, with_stop: bool = False) -> R
 def route_to_entity(model: RouteModel, *, with_stops: bool = False) -> Route:
     stops: tuple[RouteStop, ...] = ()
     if with_stops:
-        stops = tuple(
-            route_stop_to_entity(rs, with_stop=True) for rs in model.route_stops.all()
-        )
-    # `stop_count` viene anotado en el listado liviano y de las paradas en el detalle.
+        stops = tuple(route_stop_to_entity(rs, with_stop=True) for rs in model.route_stops.all())
     stop_count = len(stops) if with_stops else getattr(model, "stop_count", 0)
 
     return Route(

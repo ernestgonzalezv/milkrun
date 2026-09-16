@@ -4,7 +4,7 @@ paths:
   - "android/**/*Test.kt"
 ---
 
-# Testing — Android
+# Testing. Android
 
 - **Framework:** JUnit 5 (Jupiter) + Mockito-Kotlin + Turbine. Coroutines via `runTest { }`.
 - **Command:** `./gradlew testDebugUnitTest`, or `:feature:<name>:testDebugUnitTest` for one
@@ -12,7 +12,7 @@ paths:
 - Test files mirror the source path under `src/test/`. Filename is `<Source>Test.kt`.
 - `@BeforeEach` to isolate state. No shared mutable globals.
 
-## Naming — Given/When/Then
+## Naming. Given/When/Then
 
 ```kotlin
 @Test
@@ -37,10 +37,10 @@ fun `given no connection when signing in then it emits Error with NO_INTERNET`()
 
 ## Gotchas learned here
 
-- **Mockito rejects `thenThrow` with a checked exception on a `suspend` function** — the compiled
+- **Mockito rejects `thenThrow` with a checked exception on a `suspend` function**, the compiled
   signature does not declare it. Use `thenAnswer { throw IOException(...) }`.
 - **Do not hand-build Ktor exception types.** `ClientRequestException` reads fields a mock does
-  not have and throws NPE. Produce the real one through `MockEngine` — see `httpFailure()`.
+  not have and throws NPE. Produce the real one through `MockEngine`, see `httpFailure()`.
 - **Main dispatcher**: use the shared `MainDispatcherExtension` (`@RegisterExtension`), not a
   per-class `setUp`. JUnit 5 callbacks take a non-null `ExtensionContext`.
 

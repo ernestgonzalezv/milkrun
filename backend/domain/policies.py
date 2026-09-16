@@ -21,7 +21,6 @@ def project_status(stop: Stop, events: Sequence[DeliveryEvent], is_planned: bool
     del "sali hacia la proxima parada".
     """
     if stop.status is StopStatus.CANCELLED:
-        # Cancelar es decision de oficina; el terreno no la revierte.
         return StopStatus.CANCELLED
 
     relevant = [e for e in events if e.kind is not EventKind.NOTE]

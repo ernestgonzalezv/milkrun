@@ -37,7 +37,6 @@ from .solver import solve
 
 HABANA = Point(23.1136, -82.3666)
 
-#: (paradas, vehiculos). Del reparto de un barrio a una flota mediana.
 ESCENARIOS = [(25, 3), (50, 4), (100, 8), (200, 14), (400, 26)]
 REPETICIONES = 5
 
@@ -116,8 +115,6 @@ def correr_con_referencia(
     ms_ref = (time.perf_counter() - inicio) * 1000
 
     propio_km_parada = plan.metrics["km_per_stop"]
-    # La brecha se mide en km por parada entregada, igual que todo lo demas:
-    # si OR-Tools sirve mas paradas, recorrera mas km, y eso no lo hace peor.
     brecha = (
         (propio_km_parada - ref.km_per_stop) / ref.km_per_stop * 100 if ref.km_per_stop > 0 else 0.0
     )

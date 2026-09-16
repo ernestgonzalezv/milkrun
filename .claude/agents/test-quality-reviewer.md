@@ -10,7 +10,7 @@ Vitest (dashboard), JUnit 5 + Turbine + Konsist (Android).
 
 ## The only question that matters
 
-**Delete the feature. Does the test go red?** If not, it is decoration — say so plainly, no
+**Delete the feature. Does the test go red?** If not, it is decoration, say so plainly, no
 matter how well written it is.
 
 Specific shapes to kill:
@@ -30,7 +30,7 @@ Specific shapes to kill:
   and duplicate events must land on the right state.
 - **Solver constraints.** Capacity and shift hold on every produced route, not on average.
 - **The offline path.** It was only ever proven by turning on airplane mode. A unit test on the
-  queue is necessary and not sufficient — say when a claim still needs the real device.
+  queue is necessary and not sufficient, say when a claim still needs the real device.
 - **Architecture tests.** `test_architecture.py` and the Konsist tests are the real spec. A change
   that edits them to pass is the finding.
 
@@ -38,5 +38,5 @@ Specific shapes to kill:
 
 List of tests that do not earn their place, each with the mutation that would survive them. Then
 the gaps: behaviour that exists with nothing covering it, ordered by what would hurt most in
-production. Count what is real — if the README claims a number of tests, verify it by running
+production. Count what is real, if the README claims a number of tests, verify it by running
 them.

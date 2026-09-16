@@ -37,7 +37,7 @@ export function useMe() {
   return useQuery({
     queryKey: keys.me,
     queryFn: () => api.get<User>('/api/v1/auth/me/'),
-    staleTime: Infinity, // el rol de un usuario no cambia a mitad de sesion
+    staleTime: Infinity,
   })
 }
 
@@ -126,7 +126,6 @@ export function usePlanDay(fecha: string, depot?: number) {
     mutationFn: (replan: boolean) =>
       api.post<PlanResult>('/api/v1/routes/plan/', { depot, date: fecha, replan }),
     onSuccess: () => {
-      // Planificar toca rutas y estados de paradas: se invalida todo lo del dia.
       void cliente.invalidateQueries({ queryKey: keys.routes(fecha, depot) })
       void cliente.invalidateQueries({ queryKey: keys.stops(fecha, depot) })
     },

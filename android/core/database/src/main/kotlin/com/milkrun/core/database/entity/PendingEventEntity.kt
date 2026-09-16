@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
  * A delivery outcome the driver recorded that has not reached the server yet.
  *
  * `clientEventId` is generated on the phone before the first upload attempt. The server has a
- * unique constraint on it, so replaying the whole queue never duplicates anything — which is
+ * unique constraint on it, so replaying the whole queue never duplicates anything, which is
  * what lets the upload policy be "retry until 2xx" with no reconciliation logic.
  */
 @Entity(

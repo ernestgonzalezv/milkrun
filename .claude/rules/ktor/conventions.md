@@ -3,7 +3,7 @@ paths:
   - "android/core/network/**"
 ---
 
-# `:core:network` — Ktor conventions
+# `:core:network`. Ktor conventions
 
 This module owns the shared `HttpClient`, every `*Api` interface, every DTO, and the error
 mapping. Nothing else constructs an HTTP client.
@@ -32,7 +32,7 @@ core/network/src/main/kotlin/.../
 - Base URL comes from `NetworkConfig.baseUrl`, never hardcoded.
 - One `*Api` per backend concept (`AuthApi`, `DriverApi`). No mega-interface.
 - **A 204 is not an error.** Where the backend answers 204 for "nothing today", the method
-  returns `T?` and the impl checks `HttpStatusCode.NoContent` — the caller must be able to tell
+  returns `T?` and the impl checks `HttpStatusCode.NoContent`, the caller must be able to tell
   "no route" from "request failed".
 
 ## DTO shape
@@ -56,7 +56,7 @@ data class RouteStopResponse(
 
 - The single bearer injection lives in the `Auth` plugin inside `HttpClientFactory`. Never add an
   `Authorization` header at a call site.
-- `sendWithoutRequest` excludes the token endpoints — those are what mint the token.
+- `sendWithoutRequest` excludes the token endpoints, those are what mint the token.
   `URLBuilder` exposes `encodedPathSegments`, not `encodedPath`.
 - Logging is `LogLevel.INFO`, never `BODY`: request bodies carry tokens and customer data.
 - Timeouts are long on purpose (20 s connect, 45 s request). Drivers work on intermittent 2G, and
