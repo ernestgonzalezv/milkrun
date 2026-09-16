@@ -61,8 +61,8 @@ resource "aws_cloudfront_origin_access_control" "web" {
 # CloudFront de cualquier cuenta de AWS podria leer el bucket.
 data "aws_iam_policy_document" "web" {
   statement {
-    sid     = "SoloEstaDistribucionDeCloudFront"
-    actions = ["s3:GetObject"]
+    sid       = "SoloEstaDistribucionDeCloudFront"
+    actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.web.arn}/*"]
 
     principals {

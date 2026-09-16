@@ -62,7 +62,7 @@ resource "aws_db_instance" "principal" {
   # publica un parche menor, y el plan nunca sale limpio.
   auto_minor_version_upgrade = true
 
-  performance_insights_enabled = false # cuesta extra y no hace falta aqui
+  performance_insights_enabled    = false # cuesta extra y no hace falta aqui
   enabled_cloudwatch_logs_exports = ["postgresql"]
 
   tags = { Name = "${var.project}-db" }
