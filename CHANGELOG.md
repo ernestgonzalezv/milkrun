@@ -7,9 +7,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-09-15
+### Planned for 1.0.1
 
-First public release.
+- Street distances from a routing engine, replacing the haversine detour factor
+- Inter-route local search (relocate and swap) to close the saturated-fleet gap
+
+## [1.0.0] - 2026-09-16
+
+First public release. One API, three clients, and a vehicle routing solver written from scratch.
 
 ### Added
 
@@ -30,5 +35,5 @@ First public release.
   Validated in CI without credentials; never applied.
 - 332 tests across the four surfaces, with CI on every push.
 
-[Unreleased]: https://github.com/ernestgonzalezv/milkrun/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/ernestgonzalezv/milkrun/releases/tag/v0.1.0
+[Unreleased]: https://github.com/ernestgonzalezv/milkrun/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/ernestgonzalezv/milkrun/releases/tag/v1.0.0
