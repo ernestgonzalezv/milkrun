@@ -134,10 +134,17 @@ linea de abajo tiene que sostenerse sola.
 `CKV2_AWS_11` flow logs de VPC · `CKV_AWS_118` monitorizacion mejorada de RDS ·
 `CKV_AWS_353` performance insights · `CKV2_AWS_30` query logging de Postgres ·
 `CKV_AWS_86` logs de CloudFront · `CKV_AWS_91` logs del ALB ·
-`CKV2_AWS_28` `CKV_AWS_68` `CKV2_AWS_47` WAF
+`CKV2_AWS_28` `CKV_AWS_68` `CKV2_AWS_47` WAF ·
+`CKV_AWS_338` un ano de retencion de logs
 
 Todos son correctos en produccion. WAF son ~5 USD/mes de base y los logs se pagan
 por ingesta. Este stack no atiende trafico, asi que pagarian por nada.
+
+El ultimo merece un matiz: `CKV_AWS_338` pide 365 dias por auditoria, y aqui hay
+30. El log group se declara explicitamente justo para eso, porque si lo crea ECS
+nace con retencion infinita y se paga almacenamiento para siempre. Treinta dias
+cubren la depuracion de un despliegue; un ano cubre una auditoria que este
+proyecto no tiene.
 
 ### Excluidos: necesitan un dominio propio
 
