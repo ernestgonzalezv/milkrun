@@ -8,3 +8,6 @@ ruff==0.16.7
 # Referencia de calidad del optimizador (`python -m optimizer.benchmark --referencia`).
 # NO va en requirements.txt: son mas de 100 MB y solo se usa en el benchmark.
 ortools==9.15.6755
+
+# Cobertura. El umbral vive en pyproject.toml y el CI lo hace cumplir.
+pytest-cov==7.1.0
