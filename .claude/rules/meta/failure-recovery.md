@@ -13,6 +13,10 @@
 
 ## When you are the one who was wrong
 
+- `yaml.safe_load` accepts duplicate keys and keeps the last one, so "the YAML is valid" is not
+  the same as "the file does what it reads like". GitHub Actions rejects the whole workflow over
+  one. When editing a workflow, check for a key that already exists before adding it.
+
 - A benchmark whose numbers do not move when you change a parameter is not a result: it is a
   parameter that never reached the code. Check that the knob is connected before believing the
   table. This happened with the OR-Tools first-solution strategy and produced four identical rows.

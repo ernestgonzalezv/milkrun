@@ -8,7 +8,8 @@
 
 [![CI](https://github.com/ernestgonzalezv/milkrun/actions/workflows/ci.yml/badge.svg)](https://github.com/ernestgonzalezv/milkrun/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-332%20passing-brightgreen.svg)](#development)
+[![Tests](https://img.shields.io/badge/tests-379%20passing-brightgreen.svg)](#development)
+[![Coverage](https://img.shields.io/badge/coverage-81%25%20backend%20%C2%B7%2071%25%20web-brightgreen.svg)](#development)
 [![Solver](https://img.shields.io/badge/solver-no%20dependencies-8b5cf6.svg)](backend/optimizer)
 
 <img src="docs/img/dashboard.png" alt="Dispatcher dashboard showing four routes across New York" width="880">
@@ -214,7 +215,8 @@ framework, if a view with business rules touches the ORM, or if a use case wraps
 ## Development
 
 ```bash
-make test        # 243 backend + 26 dashboard tests
+make test        # backend + dashboard tests
+make coverage    # the same, with coverage and the thresholds enforced
 make lint        # ruff + oxlint + tsc
 make bench       # optimizer benchmark
 make bench-ref   # adds the OR-Tools comparison, slow, needs requirements-dev
@@ -222,8 +224,27 @@ make android     # Android tests, detekt, spotless, lint and debug APK
 make schema      # regenerate docs/openapi.yml from the code
 ```
 
-332 tests pass: 243 backend, 26 dashboard, 63 Android. ruff, oxlint, tsc, detekt, spotless and
-Android lint are clean. CI runs all four surfaces plus Terraform validation on every push.
+379 tests pass across four surfaces.
+
+| Surface | Tests | Coverage | Gate |
+|---|---|---|---|
+| Backend | 243 | **81%** statements, branch coverage on | fails under 80% |
+| Dashboard | 73 | **71%** statements, 69% branches | fails under 70% |
+| Android | 63 | not measured yet | |
+
+Coverage runs in CI with the thresholds enforced, so it cannot drift down quietly. Two things
+about the numbers are worth saying plainly:
+
+- **Branch coverage is on for the backend.** It is the harder metric: 81% with branches is lower
+  than the 83% the same suite reports counting statements only.
+- **`MapPanel.tsx` sits at 25% and drags the dashboard average down.** It is 377 lines that need
+  a real WebGL context, which jsdom does not have. The path that is tested there is the one that
+  matters most, the failure card that appears when the map cannot start, because a panel that
+  renders nothing looks the same as a panel with no data. The drawing path is verified in a
+  browser instead.
+
+ruff, oxlint, tsc, detekt, spotless and Android lint are clean. CI runs all four surfaces plus
+Terraform validation on every push.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) to send a change.
 

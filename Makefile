@@ -38,6 +38,10 @@ test:  ## Corre los tests del backend y del frontend
 	cd $(BACKEND) && .venv/bin/python -m pytest
 	cd web && npm run test -- --run
 
+coverage:  ## Tests con cobertura y umbrales, igual que en CI
+	cd $(BACKEND) && .venv/bin/python -m pytest -q --cov --cov-report=term
+	cd web && npm run test:coverage
+
 lint:  ## Revisa estilo y tipos
 	cd $(BACKEND) && .venv/bin/ruff check .
 	cd web && npm run lint && npx tsc --noEmit
