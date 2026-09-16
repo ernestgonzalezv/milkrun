@@ -230,7 +230,7 @@ make schema      # regenerate docs/openapi.yml from the code
 |---|---|---|---|
 | Backend | 243 | **81%** statements, branch coverage on | fails under 80% |
 | Dashboard | 73 | **71%** statements, 69% branches | fails under 70% |
-| Android | 63 | not measured yet | |
+| Android | 63 | **31%** lines overall, **70%+** in the feature modules | |
 
 Coverage runs in CI with the thresholds enforced, so it cannot drift down quietly. Two things
 about the numbers are worth saying plainly:
@@ -242,6 +242,16 @@ about the numbers are worth saying plainly:
   matters most, the failure card that appears when the map cannot start, because a panel that
   renders nothing looks the same as a panel with no data. The drawing path is verified in a
   browser instead.
+- **The Android average hides a split worth seeing.** `make android-coverage` prints it per module:
+
+  ```
+  feature/auth    72.5%     feature/route   70.8%
+  core/network    47.3%     app             13.6%
+  ```
+
+  The feature modules hold the logic. The `app` module is 697 lines of Compose screens, navigation
+  and dependency wiring, which unit tests cannot reach: that needs instrumented tests on a device,
+  and they are not written. Reporting 31% rather than excluding `app` keeps the number honest.
 
 ruff, oxlint, tsc, detekt, spotless and Android lint are clean. CI runs all four surfaces plus
 Terraform validation on every push.
