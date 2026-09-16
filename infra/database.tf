@@ -45,6 +45,14 @@ resource "aws_db_instance" "principal" {
   vpc_security_group_ids = [aws_security_group.rds.id]
   publicly_accessible    = false # redundante con la subnet privada, pero explicito
 
+  # Sin esto un snapshot pierde el tag Project, y la cuenta es prestada: todo
+  # lo que quede vivo tiene que ser rastreable con un solo filtro.
+  copy_tags_to_snapshot = true
+
+  # Permite conectarse con credenciales temporales de IAM en vez de la
+  # contrasena maestra. No cuesta nada tenerlo encendido.
+  iam_database_authentication_enabled = true
+
   backup_retention_period = 7
   backup_window           = "06:00-07:00" # 02:00 en La Habana, fuera de la jornada de reparto
   maintenance_window      = "sun:07:00-sun:08:00"
