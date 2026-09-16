@@ -3,7 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { depot, page, route, summary, vehicle } from '../test/fixtures'
+import { depot, page, route, summary } from '../test/fixtures'
 import { jsonResponse } from '../test/utils'
 
 import { keys, useDepots, usePlanDay, useRoute, useRoutes, useVehicles } from './queries'
