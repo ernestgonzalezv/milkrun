@@ -11,5 +11,5 @@ python-dotenv==1.2.3
 dj-database-url==3.1.2
 
 # Solo se usan en contenedor/produccion; en local corre SQLite + runserver.
-psycopg[binary]==3.2.12
+psycopg[binary]==3.3.5
 gunicorn==23.0.0
