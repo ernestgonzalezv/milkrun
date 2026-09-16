@@ -114,6 +114,12 @@ jobs:
       - name: Tests unitarios
         run: ./gradlew testDebugUnitTest --no-daemon
 
+      - name: Analisis estatico
+        # detekt y spotless se ejecutaban solo en local con `make android`, asi
+        # que un fichero mal nombrado tras un renombrado masivo llego a main sin
+        # que nadie lo viera. Ahora los corre el pipeline.
+        run: ./gradlew detekt spotlessCheck --no-daemon
+
       - name: Lint de Android
         run: ./gradlew lintDebug --no-daemon
 

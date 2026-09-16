@@ -43,3 +43,6 @@ infra/.terraform/
 infra/*.tfstate
 infra/*.tfstate.*
 infra/terraform.tfvars
+
+# Cobertura de Android
+android/**/build/reports/jacoco/

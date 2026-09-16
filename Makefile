@@ -42,6 +42,10 @@ coverage:  ## Tests con cobertura y umbrales, igual que en CI
 	cd $(BACKEND) && .venv/bin/python -m pytest -q --cov --cov-report=term
 	cd web && npm run test:coverage
 
+android-coverage:  ## Cobertura de Android, agregada por modulo
+	cd android && ./gradlew coverageReport
+	python3 scripts/android_coverage.py
+
 lint:  ## Revisa estilo y tipos
 	cd $(BACKEND) && .venv/bin/ruff check .
 	cd web && npm run lint && npx tsc --noEmit
