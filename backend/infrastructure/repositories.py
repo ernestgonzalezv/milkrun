@@ -124,8 +124,9 @@ class DjangoStopRepository:
 
     def ids_assigned_to_driver(self, driver_id: int) -> frozenset[int]:
         return frozenset(
-            StopModel.objects.filter(route_stops__route__driver_id=driver_id)
-            .values_list("id", flat=True)
+            StopModel.objects.filter(route_stops__route__driver_id=driver_id).values_list(
+                "id", flat=True
+            )
         )
 
     def is_planned(self, stop_id: int) -> bool:
@@ -183,8 +184,9 @@ class DjangoPingRepository:
         driver_id = pings[0].driver_id
         marks = [p.recorded_at for p in pings]
         already = set(
-            PingModel.objects.filter(driver_id=driver_id, recorded_at__in=marks)
-            .values_list("recorded_at", flat=True)
+            PingModel.objects.filter(driver_id=driver_id, recorded_at__in=marks).values_list(
+                "recorded_at", flat=True
+            )
         )
 
         seen: set = set()

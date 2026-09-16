@@ -20,14 +20,6 @@ from optimizer.models import Fleet, Stop, Vehicle
 from optimizer.savings import DEPOT, route_duration_minutes
 from optimizer.solver import solve
 
-# ---------------------------------------------------------------------------
-# Haversine against published geodesic distances
-# ---------------------------------------------------------------------------
-#
-# Great-circle distances between airports, rounded to the kilometre. Haversine
-# assumes a sphere while the Earth is an ellipsoid, so a 0.5% band is the
-# honest tolerance: tighter would be testing the wrong model.
-
 PARES_CONOCIDOS = [
     ("JFK", Point(40.6413, -73.7781), "LAX", Point(33.9416, -118.4085), 3974),
     ("JFK", Point(40.6413, -73.7781), "LHR", Point(51.4700, -0.4543), 5539),
@@ -49,8 +41,6 @@ def test_haversine_cruza_el_antimeridiano_por_el_lado_corto():
     oeste = Point(0.0, 179.5)
     este = Point(0.0, -179.5)
 
-    # Un grado de longitud en el ecuador son ~111 km. Restar las longitudes sin
-    # cuidado daria 359 grados, es decir ~39.900 km: el camino largo.
     assert haversine_km(oeste, este) == pytest.approx(111.3, rel=0.01)
 
 
@@ -60,20 +50,14 @@ def test_haversine_en_los_polos():
     media_circunferencia = math.pi * 6371.0088
 
     assert haversine_km(polo_norte, polo_sur) == pytest.approx(media_circunferencia, rel=0.001)
-    # La longitud no existe en el polo: dos "puntos" distintos son el mismo sitio.
     assert haversine_km(polo_norte, Point(90.0, 123.0)) == pytest.approx(0.0, abs=1e-9)
-
-
-# ---------------------------------------------------------------------------
-# The Clarke-Wright savings function
-# ---------------------------------------------------------------------------
 
 
 def _instancia(n: int, semilla: int, radio: float = 0.06):
     import random
 
     rng = random.Random(semilla)
-    centro = Point(40.7220, -73.9090)  # Maspeth, the New York depot
+    centro = Point(40.7220, -73.9090)
     paradas = tuple(
         Stop(
             id=f"S{i}",
@@ -118,17 +102,12 @@ def test_el_ahorro_esta_acotado_por_la_parada_mas_cercana():
         assert ahorro <= 2 * min(m(DEPOT, i), m(DEPOT, j)) + 1e-9
 
 
-# ---------------------------------------------------------------------------
-# Exact optimum by brute force
-# ---------------------------------------------------------------------------
-
-
 def _optimo_exacto(m: DistanceMatrix, demands, service, vehiculos) -> float:
     """Distancia minima real, enumerando todo el espacio de soluciones.
 
     Cualquier plan es una permutacion de las paradas partida en tramos, un
     tramo por vehiculo. Se enumeran las dos cosas. Solo es viable para
-    instancias diminutas —el coste es n! por las particiones—, que es
+    instancias diminutas (el coste es n! por las particiones), que es
     exactamente el punto: por encima de eso hace falta la heuristica.
     """
     n = m.size - 1
@@ -136,12 +115,7 @@ def _optimo_exacto(m: DistanceMatrix, demands, service, vehiculos) -> float:
     mejor = math.inf
 
     for orden in permutations(range(1, n + 1)):
-        # Con repeticion, y desde 0 hasta n: dos cortes iguales dejan un tramo
-        # vacio, que es un vehiculo sin ruta. Sin eso el oraculo descarta el
-        # optimo cada vez que la solucion cabe en menos vehiculos de los que hay.
-        cortes_posibles = (
-            combinations_with_replacement(range(n + 1), k - 1) if k > 1 else [()]
-        )
+        cortes_posibles = combinations_with_replacement(range(n + 1), k - 1) if k > 1 else [()]
         for cortes in cortes_posibles:
             limites = (0, *cortes, n)
             tramos = [orden[limites[t] : limites[t + 1]] for t in range(k)]
@@ -170,8 +144,7 @@ def _flota(centro, paradas, vehiculos: int, capacidad: float) -> Fleet:
     return Fleet(
         depot=centro,
         vehicles=tuple(
-            Vehicle(f"V{i}", capacity=capacidad, max_shift_minutes=600.0)
-            for i in range(vehiculos)
+            Vehicle(f"V{i}", capacity=capacidad, max_shift_minutes=600.0) for i in range(vehiculos)
         ),
     )
 
@@ -234,11 +207,6 @@ def test_con_capacidad_ajustada_la_brecha_se_mantiene_bajo_control(semilla):
     assert _brecha(plan, centro, paradas, flota) <= 0.15
 
 
-# ---------------------------------------------------------------------------
-# Metamorphic relations
-# ---------------------------------------------------------------------------
-
-
 def test_duplicar_una_parada_en_el_mismo_punto_no_anade_recorrido():
     """Dos paquetes para la misma direccion son una parada, no dos viajes."""
     centro, paradas = _instancia(8, semilla=11)
@@ -279,15 +247,7 @@ def test_alejar_todas_las_paradas_del_deposito_alarga_el_plan():
     lejos = solve(flota, lejanas)
 
     assert lejos.total_distance_km > cerca.total_distance_km
-    # No exactamente el doble: el orden de visita puede cambiar, y escalar las
-    # coordenadas no escala la distancia sobre una esfera de forma lineal. El
-    # techo es el doble con holgura para esa curvatura.
     assert lejos.total_distance_km <= cerca.total_distance_km * 2 * 1.01
-
-
-# ---------------------------------------------------------------------------
-# Internal consistency of what the plan reports
-# ---------------------------------------------------------------------------
 
 
 def test_los_kilometros_reportados_coinciden_con_la_matriz():

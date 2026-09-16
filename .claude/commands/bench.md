@@ -7,7 +7,7 @@ this runs.
 
 1. Run `make bench` (add `--repeticiones N` for a tighter or looser average).
 2. Compare every row against the tables in `README.md` under **Resultados**.
-3. If a number moved more than ~2%, that is a regression or an improvement — either way it is a
+3. If a number moved more than ~2%, that is a regression or an improvement, either way it is a
    finding, not noise. Say which rows moved and by how much.
 4. If the change is real and intended, **update the README tables with the numbers you just
    measured**. Never carry a figure forward from a previous session.

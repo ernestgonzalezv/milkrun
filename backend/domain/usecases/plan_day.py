@@ -74,8 +74,16 @@ class PlanDay:
             drivers = list(self._fleet.available_drivers(depot_id))
 
             drafts = [
-                self._build_route(depot, vehicles_by_id[planned.vehicle_id], planned, by_id,
-                                  drivers, index, day, plan.metrics)
+                self._build_route(
+                    depot,
+                    vehicles_by_id[planned.vehicle_id],
+                    planned,
+                    by_id,
+                    drivers,
+                    index,
+                    day,
+                    plan.metrics,
+                )
                 for index, planned in enumerate(plan.routes)
             ]
             stored = self._routes.add_many(drafts)
@@ -87,7 +95,10 @@ class PlanDay:
         unassigned = tuple(by_id[sid] for sid in plan.unassigned_stop_ids)
         logger.info(
             "plan %s %s: %d rutas, %d paradas, %.1f km (%.1f%% mejor que el ruteo manual)",
-            depot.name, day, len(stored), len(served),
+            depot.name,
+            day,
+            len(stored),
+            len(served),
             sum(r.planned_distance_km for r in stored),
             plan.metrics.get("improvement_vs_nearest_neighbor_pct", 0.0),
         )

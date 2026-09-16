@@ -1,4 +1,4 @@
-# Codemagic CI/CD — https://docs.codemagic.io/yaml/yaml-getting-started/
+# Codemagic CI/CD, https://docs.codemagic.io/yaml/yaml-getting-started/
 #
 # GitHub Actions already covers the backend, the dashboard and Terraform. This
 # file exists for the one surface Actions serves badly: the Android app needs a
@@ -33,7 +33,7 @@ definitions:
 workflows:
   android-ci:
     <<: *base
-    name: Android — tests, analysis, debug APK
+    name: Android, tests, analysis, debug APK
     triggering:
       events: [push, pull_request]
       branch_patterns:
@@ -66,7 +66,7 @@ workflows:
 
   android-release:
     <<: *base
-    name: Android — signed release bundle
+    name: Android, signed release bundle
     triggering:
       events: [tag]
       tag_patterns:

@@ -7,7 +7,7 @@ import secrets
 from dataclasses import dataclass
 from enum import StrEnum
 
-TRACKING_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"  # sin O/0 ni I/1/L
+TRACKING_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
 TRACKING_LENGTH = 8
 
 

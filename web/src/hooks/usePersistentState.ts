@@ -32,7 +32,6 @@ export function usePersistentState<T>(
       try {
         window.localStorage.setItem(key, String(next))
       } catch {
-        // Not being able to remember is not a reason to fail the interaction.
       }
     },
     [key],

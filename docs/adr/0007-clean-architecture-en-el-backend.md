@@ -14,7 +14,7 @@ Eso tiene tres costos concretos, no teóricos:
 
 1. Cualquier test de una regla de negocio necesitaba migraciones aplicadas.
 2. La forma de la API estaba atada a la forma del esquema.
-3. Cambiar el optimizador —que el ADR 0001 promete que se puede— implicaba
+3. Cambiar el optimizador ,que el ADR 0001 promete que se puede, implicaba
    tocar el servicio que también hablaba con la base.
 
 ## Decisión
@@ -51,8 +51,8 @@ reenvía, y multiplicaría por tres el código para ganar uniformidad de diagram
 y nada más. El test `test_las_vistas_no_consultan_el_orm` los excluye
 explícitamente, y su nombre dice por qué.
 
-Si mañana un depósito adquiere reglas —horarios de apertura, capacidad
-máxima diaria, zonas de cobertura— pasan a caso de uso como el resto.
+Si mañana un depósito adquiere reglas ,horarios de apertura, capacidad
+máxima diaria, zonas de cobertura, pasan a caso de uso como el resto.
 
 ## Consecuencias
 

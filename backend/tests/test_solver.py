@@ -19,9 +19,6 @@ from .factories import HABANA, fleet_for_demand, homogeneous_fleet, random_stops
 SEEDS = [1, 7, 13, 29, 64, 101]
 
 
-# --- Conservacion -----------------------------------------------------------
-
-
 @pytest.mark.parametrize("seed", SEEDS)
 def test_toda_parada_aparece_exactamente_una_vez(seed):
     """Ni se pierde ni se duplica ninguna: la propiedad mas importante.
@@ -47,9 +44,6 @@ def test_ningun_vehiculo_recibe_dos_rutas(seed):
     usados = [r.vehicle_id for r in plan.routes]
     assert len(usados) == len(set(usados))
     assert len(usados) <= len(fleet.vehicles)
-
-
-# --- Factibilidad -----------------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -86,9 +80,6 @@ def test_la_carga_reportada_coincide_con_la_demanda_de_sus_paradas():
 
     for ruta in plan.routes:
         assert ruta.load == pytest.approx(sum(demanda[sid] for sid in ruta.stop_ids))
-
-
-# --- Calidad ----------------------------------------------------------------
 
 
 @pytest.mark.parametrize("seed", SEEDS)
@@ -134,9 +125,6 @@ def test_la_mejora_local_reduce_o_iguala_la_distancia():
     assert pulido.total_distance_km <= crudo.total_distance_km + 1e-9
 
 
-# --- Determinismo -----------------------------------------------------------
-
-
 def test_la_misma_entrada_produce_el_mismo_plan():
     """Reproducibilidad: sin esto, comparar dos versiones del solver es imposible."""
     fleet = homogeneous_fleet(4)
@@ -168,9 +156,6 @@ def test_el_solver_no_muta_su_entrada():
     solve(fleet, stops)
 
     assert tuple((s.id, s.point, s.demand) for s in stops) == copia
-
-
-# --- Casos borde ------------------------------------------------------------
 
 
 def test_sin_paradas_devuelve_un_plan_vacio():

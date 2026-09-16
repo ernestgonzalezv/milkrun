@@ -12,12 +12,8 @@ from rest_framework import serializers
 from domain.entities import DeliveryEvent, LocationPing, Stop
 from domain.values import Coordinates, EventKind, FailureReason, StopStatus
 
-MAX_BATCH = 200  # a whole day of offline queue fits with room to spare
+MAX_BATCH = 200
 
-# These duplicate the model's choice labels on purpose: the public tracking
-# view reads domain values, which know nothing about Django, so it cannot call
-# get_status_display(). Keeping the map here means the customer-facing wording
-# can change without touching the model.
 STATUS_LABELS = {
     StopStatus.PENDING: "Pending",
     StopStatus.PLANNED: "Planned",

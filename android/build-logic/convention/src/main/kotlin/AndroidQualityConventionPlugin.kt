@@ -31,7 +31,6 @@ class AndroidQualityConventionPlugin : Plugin<Project> {
             val editorConfig = mapOf(
                 "max_line_length" to "120",
                 "ktlint_code_style" to "android_studio",
-                // Composables are PascalCase by Compose contract, not a naming violation.
                 "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
             )
 

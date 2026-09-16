@@ -18,8 +18,6 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // 10.0.2.2 is how the emulator reaches the host machine's localhost. A physical phone
-        // needs the machine's LAN address instead.
         buildConfigField("String", "API_URL", "\"http://10.0.2.2:8000\"")
     }
 
@@ -59,12 +57,7 @@ android {
     lint {
         warningsAsErrors = true
         abortOnError = true
-        // AAPT2 only resolves adaptive icons from mipmap-anydpi-v26, so the qualifier is not
-        // optional even though minSdk is already 26.
         disable += "ObsoleteSdkInt"
-        // compile/target SDK are pinned to 36 to match the Cococel.Android toolchain, so code
-        // stays portable between both projects. The check only fires on machines that happen to
-        // have a newer platform installed; moving the pin is a toolchain decision, not a lint fix.
         disable += "OldTargetApi"
         disable += setOf("NewerVersionAvailable", "AndroidGradlePluginVersion", "GradleDependency")
     }

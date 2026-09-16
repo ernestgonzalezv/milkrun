@@ -105,8 +105,6 @@ fun HttpClientConfig<*>.applyMilkrunDefaults(
             logger = object : Logger {
                 override fun log(message: String) = Timber.tag("Http").d(message)
             }
-            // INFO and not BODY: request bodies carry tokens and customer data, and logcat
-            // is readable by any app with the right permission on a rooted device.
             level = LogLevel.INFO
         }
     }

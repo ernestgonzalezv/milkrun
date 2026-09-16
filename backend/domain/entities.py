@@ -145,6 +145,4 @@ class Route:
     stops: tuple[RouteStop, ...] = ()
     vehicle_code: str = ""
     driver_name: str = ""
-    #: Cuantas paradas tiene la ruta. Lo llena el repositorio, porque el
-    #: listado liviano no trae las paradas y aun asi necesita el numero.
     stop_count: int = 0

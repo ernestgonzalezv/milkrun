@@ -52,9 +52,7 @@ class StopListView(APIView):
     def post(self, request):
         serializer = StopSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        created = container.create_stop()(
-            serializer.to_entity(today=container.clock().today())
-        )
+        created = container.create_stop()(serializer.to_entity(today=container.clock().today()))
         return Response(StopSerializer(created).data, status=status.HTTP_201_CREATED)
 
 

@@ -15,8 +15,15 @@ class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
         fields = (
-            "id", "depot", "depot_name", "code", "plate", "capacity",
-            "max_shift_minutes", "avg_speed_kmh", "is_active",
+            "id",
+            "depot",
+            "depot_name",
+            "code",
+            "plate",
+            "capacity",
+            "max_shift_minutes",
+            "avg_speed_kmh",
+            "is_active",
         )
 
 
@@ -27,6 +34,12 @@ class DriverProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = DriverProfile
         fields = (
-            "id", "user", "username", "full_name", "depot",
-            "default_vehicle", "license_number", "is_available",
+            "id",
+            "user",
+            "username",
+            "full_name",
+            "depot",
+            "default_vehicle",
+            "license_number",
+            "is_available",
         )

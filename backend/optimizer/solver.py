@@ -31,11 +31,8 @@ from .local_search import refine
 from .models import Fleet, Plan, Route, Stop, Vehicle
 from .savings import DEPOT, clarke_wright, consolidate, route_duration_minutes
 
-#: Tope de rondas de construccion. Con flotas reales converge en 2 o 3; el
-#: limite solo evita un bucle infinito si una ronda deja de hacer progreso.
 MAX_ROUNDS = 4
 
-#: Una asignacion es un vehiculo con su lista de paradas, por indice de matriz.
 Assignment = tuple[Vehicle, list[int]]
 
 
@@ -71,7 +68,7 @@ def solve(
             break
         nuevas = _plan_round(pending, available, matrix, demands, service, improve)
         if not nuevas:
-            break  # ninguna ruta cupo en lo que queda de flota: no hay progreso
+            break
         assignments.extend(nuevas)
         pending -= {s for _, ruta in nuevas for s in ruta}
 
@@ -87,9 +84,7 @@ def solve(
             stop_ids=tuple(index_to_stop[s].id for s in ruta),
             distance_km=matrix.path_km([DEPOT, *ruta, DEPOT]),
             load=sum(demands[s] for s in ruta),
-            duration_minutes=route_duration_minutes(
-                matrix, ruta, service, vehiculo.avg_speed_kmh
-            ),
+            duration_minutes=route_duration_minutes(matrix, ruta, service, vehiculo.avg_speed_kmh),
         )
         for vehiculo, ruta in sorted(assignments, key=lambda a: a[0].id)
         if ruta
@@ -97,9 +92,7 @@ def solve(
     return Plan(
         routes=routes,
         unassigned=tuple(index_to_stop[i].id for i in sorted(pending)),
-        metrics=_metrics(
-            sum(r.distance_km for r in routes), served, seq, nn, started
-        ),
+        metrics=_metrics(sum(r.distance_km for r in routes), served, seq, nn, started),
     )
 
 
@@ -118,23 +111,30 @@ def _plan_round(
     """
     capacity = max(v.capacity for v in available)
     shift = max(v.max_shift_minutes for v in available)
-    # La velocidad mas baja de la flota disponible: se planifica con el caso
-    # peor para no armar rutas que solo cierran si toca el vehiculo rapido.
     speed = min(v.avg_speed_kmh for v in available)
 
     sub_demands = {i: demands[i] for i in pending if demands[i] <= capacity}
     if not sub_demands:
-        return []  # todo lo pendiente excede la capacidad del vehiculo mas grande
+        return []
     sub_service = {i: service[i] for i in sub_demands}
 
     routes_idx = clarke_wright(
-        matrix, sub_demands, sub_service,
-        capacity=capacity, max_shift_minutes=shift, speed_kmh=speed,
+        matrix,
+        sub_demands,
+        sub_service,
+        capacity=capacity,
+        max_shift_minutes=shift,
+        speed_kmh=speed,
     )
     if len(routes_idx) > len(available):
         routes_idx = consolidate(
-            routes_idx, matrix, sub_demands, sub_service,
-            capacity=capacity, max_shift_minutes=shift, speed_kmh=speed,
+            routes_idx,
+            matrix,
+            sub_demands,
+            sub_service,
+            capacity=capacity,
+            max_shift_minutes=shift,
+            speed_kmh=speed,
             max_routes=len(available),
         )
     if improve:
@@ -224,8 +224,6 @@ def _insert_pending(
     if improve:
         for indice, (vehiculo, ruta) in enumerate(assignments):
             mejorada = refine(ruta, matrix)
-            # Reordenar no cambia la carga, pero si la duracion: solo se acepta
-            # si la ruta sigue cerrando dentro de la jornada del vehiculo.
             duracion = route_duration_minutes(matrix, mejorada, service, vehiculo.avg_speed_kmh)
             if duracion <= vehiculo.max_shift_minutes:
                 assignments[indice] = (vehiculo, mejorada)

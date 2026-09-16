@@ -18,9 +18,7 @@ class Role(models.TextChoices):
 
 
 class User(AbstractUser):
-    role = models.CharField(
-        _("role"), max_length=16, choices=Role.choices, default=Role.DISPATCHER
-    )
+    role = models.CharField(_("role"), max_length=16, choices=Role.choices, default=Role.DISPATCHER)
     phone = models.CharField(_("phone"), max_length=32, blank=True)
 
     class Meta(AbstractUser.Meta):

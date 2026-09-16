@@ -14,7 +14,7 @@ returns, and `SyncWorker` uploads when there is signal. Nothing in the UI waits 
 something the driver just did.
 
 Toolchain and library versions match `Cococel.Android` on purpose so code stays portable.
-**AGP 9.0 rule**: do NOT apply the `kotlin-android` plugin — it is built in.
+**AGP 9.0 rule**: do NOT apply the `kotlin-android` plugin, it is built in.
 
 Rules: `.claude/rules/{kotlin,ktor,compose}/`. Architecture is enforced by
 `app/src/test/.../konsist/KonsistArchitectureTest.kt`.

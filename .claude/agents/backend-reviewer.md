@@ -14,7 +14,7 @@ that is **enforced by tests**, not by convention.
 domain/          entities, values, policies, ports, use cases.  Imports no framework.
 infrastructure/  ORM repositories, the optimizer wrapper, the clock.
 apps/            delivery layer: models, serializers, views.
-config/container.py   composition root — the only place that picks adapters.
+config/container.py   composition root, the only place that picks adapters.
 optimizer/       pure Python. Not your scope; that is optimizer-reviewer.
 ```
 
@@ -45,4 +45,4 @@ another. **If a change needs one of those relaxed, that is your headline finding
 ## How you report
 
 `file:line`, the defect, and the concrete input that triggers it. Most severe first. A finding
-without a failure scenario is a preference — drop it. State plainly when the change is clean.
+without a failure scenario is a preference, drop it. State plainly when the change is clean.

@@ -12,8 +12,6 @@ const cliente = new QueryClient({
     queries: {
       staleTime: 30_000,
       refetchOnWindowFocus: false,
-      // No tiene sentido reintentar un 401 o un 403: el resultado no va a
-      // cambiar por insistir. Los fallos de red si.
       retry: (intentos, error) =>
         error instanceof ApiError && error.status < 500 ? false : intentos < 2,
     },

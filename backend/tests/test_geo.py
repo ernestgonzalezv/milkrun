@@ -6,7 +6,6 @@ import pytest
 
 from optimizer.geo import DistanceMatrix, Point, haversine_km
 
-# Distancias conocidas, verificadas contra la formula de referencia.
 HABANA_VIEJA = Point(23.1136, -82.3666)
 VEDADO = Point(23.1367, -82.3861)
 SANTIAGO = Point(20.0247, -75.8219)

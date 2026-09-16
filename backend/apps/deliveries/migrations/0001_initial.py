@@ -10,94 +10,304 @@ import apps.deliveries.models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('fleet', '0001_initial'),
+        ("fleet", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Stop',
+            name="Stop",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tracking_code', models.CharField(default=apps.deliveries.models.generate_tracking_code, editable=False, max_length=16, unique=True, verbose_name='codigo de seguimiento')),
-                ('customer_name', models.CharField(max_length=120, verbose_name='cliente')),
-                ('phone', models.CharField(blank=True, max_length=32, verbose_name='telefono')),
-                ('address', models.CharField(max_length=255, verbose_name='direccion')),
-                ('latitude', models.FloatField(validators=[django.core.validators.MinValueValidator(-90), django.core.validators.MaxValueValidator(90)], verbose_name='latitud')),
-                ('longitude', models.FloatField(validators=[django.core.validators.MinValueValidator(-180), django.core.validators.MaxValueValidator(180)], verbose_name='longitud')),
-                ('demand', models.FloatField(default=1.0, help_text='Peso o volumen, en la misma unidad que la capacidad del vehiculo.', validators=[django.core.validators.MinValueValidator(0)], verbose_name='demanda')),
-                ('service_minutes', models.PositiveIntegerField(default=5, verbose_name='tiempo de servicio (min)')),
-                ('scheduled_date', models.DateField(default=django.utils.timezone.localdate, verbose_name='fecha programada')),
-                ('status', models.CharField(choices=[('pending', 'Pendiente'), ('planned', 'Planificada'), ('in_transit', 'En camino'), ('delivered', 'Entregada'), ('failed', 'Fallida'), ('cancelled', 'Cancelada')], default='pending', editable=False, help_text='Proyeccion de la bitacora de eventos. No se edita a mano.', max_length=16, verbose_name='estado')),
-                ('notes', models.TextField(blank=True, verbose_name='notas')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('depot', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='stops', to='fleet.depot', verbose_name='deposito')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "tracking_code",
+                    models.CharField(
+                        default=apps.deliveries.models.generate_tracking_code,
+                        editable=False,
+                        max_length=16,
+                        unique=True,
+                        verbose_name="codigo de seguimiento",
+                    ),
+                ),
+                ("customer_name", models.CharField(max_length=120, verbose_name="cliente")),
+                ("phone", models.CharField(blank=True, max_length=32, verbose_name="telefono")),
+                ("address", models.CharField(max_length=255, verbose_name="direccion")),
+                (
+                    "latitude",
+                    models.FloatField(
+                        validators=[
+                            django.core.validators.MinValueValidator(-90),
+                            django.core.validators.MaxValueValidator(90),
+                        ],
+                        verbose_name="latitud",
+                    ),
+                ),
+                (
+                    "longitude",
+                    models.FloatField(
+                        validators=[
+                            django.core.validators.MinValueValidator(-180),
+                            django.core.validators.MaxValueValidator(180),
+                        ],
+                        verbose_name="longitud",
+                    ),
+                ),
+                (
+                    "demand",
+                    models.FloatField(
+                        default=1.0,
+                        help_text="Peso o volumen, en la misma unidad que la capacidad del vehiculo.",
+                        validators=[django.core.validators.MinValueValidator(0)],
+                        verbose_name="demanda",
+                    ),
+                ),
+                (
+                    "service_minutes",
+                    models.PositiveIntegerField(default=5, verbose_name="tiempo de servicio (min)"),
+                ),
+                (
+                    "scheduled_date",
+                    models.DateField(
+                        default=django.utils.timezone.localdate, verbose_name="fecha programada"
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Pendiente"),
+                            ("planned", "Planificada"),
+                            ("in_transit", "En camino"),
+                            ("delivered", "Entregada"),
+                            ("failed", "Fallida"),
+                            ("cancelled", "Cancelada"),
+                        ],
+                        default="pending",
+                        editable=False,
+                        help_text="Proyeccion de la bitacora de eventos. No se edita a mano.",
+                        max_length=16,
+                        verbose_name="estado",
+                    ),
+                ),
+                ("notes", models.TextField(blank=True, verbose_name="notas")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "depot",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="stops",
+                        to="fleet.depot",
+                        verbose_name="deposito",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'parada',
-                'verbose_name_plural': 'paradas',
-                'ordering': ('scheduled_date', 'created_at'),
+                "verbose_name": "parada",
+                "verbose_name_plural": "paradas",
+                "ordering": ("scheduled_date", "created_at"),
             },
         ),
         migrations.CreateModel(
-            name='DeliveryEvent',
+            name="DeliveryEvent",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('client_event_id', models.UUIDField(help_text='Generado por la app movil; hace idempotente el reenvio.', verbose_name='id de evento del cliente')),
-                ('kind', models.CharField(choices=[('departed', 'Salio hacia la parada'), ('arrived', 'Llego a la parada'), ('delivered', 'Entregada'), ('failed', 'Entrega fallida'), ('note', 'Nota')], max_length=16, verbose_name='tipo')),
-                ('reason', models.CharField(blank=True, choices=[('absent', 'Cliente ausente'), ('wrong_address', 'Direccion incorrecta'), ('refused', 'Rechazo el pedido'), ('no_access', 'Sin acceso al lugar'), ('other', 'Otro')], max_length=24, verbose_name='motivo')),
-                ('note', models.TextField(blank=True, verbose_name='nota')),
-                ('latitude', models.FloatField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(-90), django.core.validators.MaxValueValidator(90)], verbose_name='latitud')),
-                ('longitude', models.FloatField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(-180), django.core.validators.MaxValueValidator(180)], verbose_name='longitud')),
-                ('occurred_at', models.DateTimeField(help_text='Hora del dispositivo.', verbose_name='ocurrio en')),
-                ('received_at', models.DateTimeField(auto_now_add=True, verbose_name='recibido en')),
-                ('driver', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='delivery_events', to=settings.AUTH_USER_MODEL, verbose_name='chofer')),
-                ('stop', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='events', to='deliveries.stop', verbose_name='parada')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "client_event_id",
+                    models.UUIDField(
+                        help_text="Generado por la app movil; hace idempotente el reenvio.",
+                        verbose_name="id de evento del cliente",
+                    ),
+                ),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[
+                            ("departed", "Salio hacia la parada"),
+                            ("arrived", "Llego a la parada"),
+                            ("delivered", "Entregada"),
+                            ("failed", "Entrega fallida"),
+                            ("note", "Nota"),
+                        ],
+                        max_length=16,
+                        verbose_name="tipo",
+                    ),
+                ),
+                (
+                    "reason",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("absent", "Cliente ausente"),
+                            ("wrong_address", "Direccion incorrecta"),
+                            ("refused", "Rechazo el pedido"),
+                            ("no_access", "Sin acceso al lugar"),
+                            ("other", "Otro"),
+                        ],
+                        max_length=24,
+                        verbose_name="motivo",
+                    ),
+                ),
+                ("note", models.TextField(blank=True, verbose_name="nota")),
+                (
+                    "latitude",
+                    models.FloatField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(-90),
+                            django.core.validators.MaxValueValidator(90),
+                        ],
+                        verbose_name="latitud",
+                    ),
+                ),
+                (
+                    "longitude",
+                    models.FloatField(
+                        blank=True,
+                        null=True,
+                        validators=[
+                            django.core.validators.MinValueValidator(-180),
+                            django.core.validators.MaxValueValidator(180),
+                        ],
+                        verbose_name="longitud",
+                    ),
+                ),
+                (
+                    "occurred_at",
+                    models.DateTimeField(
+                        help_text="Hora del dispositivo.", verbose_name="ocurrio en"
+                    ),
+                ),
+                (
+                    "received_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="recibido en"),
+                ),
+                (
+                    "driver",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="delivery_events",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="chofer",
+                    ),
+                ),
+                (
+                    "stop",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="events",
+                        to="deliveries.stop",
+                        verbose_name="parada",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'evento de entrega',
-                'verbose_name_plural': 'eventos de entrega',
-                'ordering': ('occurred_at', 'id'),
+                "verbose_name": "evento de entrega",
+                "verbose_name_plural": "eventos de entrega",
+                "ordering": ("occurred_at", "id"),
             },
         ),
         migrations.CreateModel(
-            name='LocationPing',
+            name="LocationPing",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('latitude', models.FloatField(validators=[django.core.validators.MinValueValidator(-90), django.core.validators.MaxValueValidator(90)], verbose_name='latitud')),
-                ('longitude', models.FloatField(validators=[django.core.validators.MinValueValidator(-180), django.core.validators.MaxValueValidator(180)], verbose_name='longitud')),
-                ('accuracy_m', models.FloatField(blank=True, null=True, verbose_name='precision (m)')),
-                ('speed_kmh', models.FloatField(blank=True, null=True, verbose_name='velocidad (km/h)')),
-                ('recorded_at', models.DateTimeField(verbose_name='registrado en')),
-                ('driver', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pings', to=settings.AUTH_USER_MODEL, verbose_name='chofer')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "latitude",
+                    models.FloatField(
+                        validators=[
+                            django.core.validators.MinValueValidator(-90),
+                            django.core.validators.MaxValueValidator(90),
+                        ],
+                        verbose_name="latitud",
+                    ),
+                ),
+                (
+                    "longitude",
+                    models.FloatField(
+                        validators=[
+                            django.core.validators.MinValueValidator(-180),
+                            django.core.validators.MaxValueValidator(180),
+                        ],
+                        verbose_name="longitud",
+                    ),
+                ),
+                (
+                    "accuracy_m",
+                    models.FloatField(blank=True, null=True, verbose_name="precision (m)"),
+                ),
+                (
+                    "speed_kmh",
+                    models.FloatField(blank=True, null=True, verbose_name="velocidad (km/h)"),
+                ),
+                ("recorded_at", models.DateTimeField(verbose_name="registrado en")),
+                (
+                    "driver",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="pings",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="chofer",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'posicion',
-                'verbose_name_plural': 'posiciones',
-                'ordering': ('-recorded_at',),
-                'indexes': [models.Index(fields=['driver', '-recorded_at'], name='ping_driver_time_idx')],
-                'constraints': [models.UniqueConstraint(fields=('driver', 'recorded_at'), name='ping_dedup_by_timestamp')],
+                "verbose_name": "posicion",
+                "verbose_name_plural": "posiciones",
+                "ordering": ("-recorded_at",),
+                "indexes": [
+                    models.Index(fields=["driver", "-recorded_at"], name="ping_driver_time_idx")
+                ],
+                "constraints": [
+                    models.UniqueConstraint(
+                        fields=("driver", "recorded_at"), name="ping_dedup_by_timestamp"
+                    )
+                ],
             },
         ),
         migrations.AddIndex(
-            model_name='stop',
-            index=models.Index(fields=['depot', 'scheduled_date', 'status'], name='stop_planning_idx'),
+            model_name="stop",
+            index=models.Index(
+                fields=["depot", "scheduled_date", "status"], name="stop_planning_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='deliveryevent',
-            index=models.Index(fields=['stop', 'occurred_at'], name='event_stop_time_idx'),
+            model_name="deliveryevent",
+            index=models.Index(fields=["stop", "occurred_at"], name="event_stop_time_idx"),
         ),
         migrations.AddConstraint(
-            model_name='deliveryevent',
-            constraint=models.UniqueConstraint(fields=('driver', 'client_event_id'), name='event_idempotency_key'),
+            model_name="deliveryevent",
+            constraint=models.UniqueConstraint(
+                fields=("driver", "client_event_id"), name="event_idempotency_key"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='deliveryevent',
-            constraint=models.CheckConstraint(condition=models.Q(models.Q(('kind', 'failed'), _negated=True), models.Q(('reason', ''), _negated=True), _connector='OR'), name='failed_event_requires_reason'),
+            model_name="deliveryevent",
+            constraint=models.CheckConstraint(
+                condition=models.Q(
+                    models.Q(("kind", "failed"), _negated=True),
+                    models.Q(("reason", ""), _negated=True),
+                    _connector="OR",
+                ),
+                name="failed_event_requires_reason",
+            ),
         ),
     ]

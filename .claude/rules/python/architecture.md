@@ -3,17 +3,17 @@ paths:
   - "backend/**/*.py"
 ---
 
-# Backend — Clean Architecture
+# Backend. Clean Architecture
 
 > **Enforced by `backend/tests/test_architecture.py`**: the domain imports no framework, the
 > optimizer imports nothing, views with business rules never touch the ORM, and no use case
-> wraps another. If one of those fails, fix the code — never the test.
+> wraps another. If one of those fails, fix the code, never the test.
 
 ```
 domain/          entities, value objects, policies, ports, use cases. No Django.
 infrastructure/  adapters: ORM repositories, the optimizer wrapper, the clock.
 apps/            delivery layer: persistence models, serializers, views.
-config/container.py   composition root — the only place that picks concrete adapters.
+config/container.py   composition root, the only place that picks concrete adapters.
 optimizer/       the VRP solver. Pure Python, zero dependencies. See ADR 0004.
 ```
 
@@ -23,8 +23,7 @@ optimizer/       the VRP solver. Pure Python, zero dependencies. See ADR 0004.
   Entities are frozen dataclasses; the ORM models are the persistence schema, not the domain.
 - **Ports are `typing.Protocol`, not base classes.** Adapters inherit nothing and just satisfy
   the shape, so the domain never appears in an adapter's signature.
-- **A use case takes its ports in `__init__` and exposes one `__call__`.** None calls another —
-  shared logic goes down to the repository or to `policies.py`.
+- **A use case takes its ports in `__init__` and exposes one `__call__`.** None calls another, shared logic goes down to the repository or to `policies.py`.
 - **Views do three things**: validate input, invoke a use case, serialize the result. No ORM
   queries, no business rules, no `try` around the use case.
 - **Domain errors are business exceptions**, translated to HTTP by the `EXCEPTION_HANDLER` in

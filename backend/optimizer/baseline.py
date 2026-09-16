@@ -66,16 +66,12 @@ def _run(
         actual = DEPOT
         while pendientes:
             factibles = [
-                s
-                for s in pendientes
-                if _fits(ruta, s, carga, vehiculo, matrix, demands, service)
+                s for s in pendientes if _fits(ruta, s, carga, vehiculo, matrix, demands, service)
             ]
             if not factibles:
                 break
             siguiente = (
-                min(factibles, key=lambda s: (matrix(actual, s), s))
-                if nearest
-                else min(factibles)
+                min(factibles, key=lambda s: (matrix(actual, s), s)) if nearest else min(factibles)
             )
             ruta.append(siguiente)
             carga += demands[siguiente]
@@ -85,9 +81,7 @@ def _run(
             rutas.append(tuple(ruta))
             total += matrix.path_km([DEPOT, *ruta, DEPOT])
 
-    return BaselineResult(
-        routes=tuple(rutas), total_km=total, served=sum(len(r) for r in rutas)
-    )
+    return BaselineResult(routes=tuple(rutas), total_km=total, served=sum(len(r) for r in rutas))
 
 
 def sequential(

@@ -79,9 +79,7 @@ def test_las_vistas_no_consultan_el_orm(archivo):
 def test_los_casos_de_uso_no_se_llaman_entre_si():
     """Si dos comparten logica, esa logica baja al repositorio o a policies."""
     for archivo in _modulos("domain/usecases"):
-        importa_otro_caso = {
-            raiz for raiz in _imports(archivo) if raiz == "usecases"
-        }
+        importa_otro_caso = {raiz for raiz in _imports(archivo) if raiz == "usecases"}
         assert not importa_otro_caso, f"{archivo.name} envuelve otro caso de uso"
 
 
@@ -91,6 +89,5 @@ def test_la_capa_de_entrega_no_importa_adaptadores_concretos():
         if archivo.name != "views.py":
             continue
         assert "infrastructure" not in _imports(archivo), (
-            f"{archivo.relative_to(BACKEND)} conoce un adaptador concreto; "
-            "usa config.container."
+            f"{archivo.relative_to(BACKEND)} conoce un adaptador concreto; usa config.container."
         )

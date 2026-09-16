@@ -68,7 +68,7 @@ class RoutePlanner(Protocol):
     """Quien decide que paradas van juntas y en que orden.
 
     Es un puerto y no una llamada directa al paquete `optimizer` para que
-    cambiar de heuristica —a OR-Tools, por ejemplo— sea escribir otro
+    cambiar de heuristica ,a OR-Tools, por ejemplo, sea escribir otro
     adaptador y no tocar el caso de uso. Ver docs/adr/0001.
     """
 

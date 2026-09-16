@@ -17,14 +17,8 @@ import { AuthContext, type AuthState } from './context'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  // Initialised by looking for a stored token rather than starting at true and
-  // switching it off from the effect: with no previous session there is
-  // nothing to wait for, and this avoids an extra render.
   const [loading, setLoading] = useState(() => Boolean(tokens.access))
 
-  // A token from a previous session may still be in storage. It is checked
-  // against the server instead of trusted: it could have expired, or the user
-  // could have been deactivated meanwhile.
   useEffect(() => {
     if (!tokens.access) return
     let alive = true

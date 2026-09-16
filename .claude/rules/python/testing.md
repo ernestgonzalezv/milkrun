@@ -22,7 +22,7 @@ API test instead buys nothing and costs seconds on every run.
 
 ## Invariants over examples
 
-The optimizer is tested with properties, not fixed expected outputs — a route plan has too many
+The optimizer is tested with properties, not fixed expected outputs, a route plan has too many
 degrees of freedom to pin a result. What must hold for *any* input:
 
 - every stop appears exactly once across routes and unassigned;
@@ -41,7 +41,7 @@ prefetch, the test says so instead of production doing it.
 ## Discipline
 
 - Never assert on a number you did not verify. When a constant is wrong, check the maths by hand
-  before changing the code — the first haversine test failed because the *expectation* was wrong.
+  before changing the code, the first haversine test failed because the *expectation* was wrong.
 - Rate limiting is real code: isolate it per test by clearing the cache, not by disabling it.
 - A test with `or True` in the assertion is worse than no test. Assert the postcondition
   exhaustively or delete it.

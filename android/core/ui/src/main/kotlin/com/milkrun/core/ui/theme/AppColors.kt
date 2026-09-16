@@ -3,7 +3,7 @@ package com.milkrun.core.ui.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * Colour primitives. The only file in the codebase allowed to hold raw values — everywhere
+ * Colour primitives. The only file in the codebase allowed to hold raw values, everywhere
  * else reads meaning through `MaterialTheme.colorScheme` or the extensions below.
  *
  * Shared one-for-one with the web dashboard tokens so both surfaces read as one product.

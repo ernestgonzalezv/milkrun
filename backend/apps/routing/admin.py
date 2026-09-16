@@ -13,7 +13,12 @@ class RouteStopInline(admin.TabularInline):
 @admin.register(Route)
 class RouteAdmin(admin.ModelAdmin):
     list_display = (
-        "date", "vehicle", "driver", "status", "planned_distance_km", "planned_duration_minutes",
+        "date",
+        "vehicle",
+        "driver",
+        "status",
+        "planned_distance_km",
+        "planned_duration_minutes",
     )
     list_filter = ("status", "date", "depot")
     inlines = (RouteStopInline,)

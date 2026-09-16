@@ -8,14 +8,14 @@
  * set is dropped because it lacks contrast on a light background.
  */
 export const ROUTE_COLORS = [
-  '#0072B2', // blue
-  '#D55E00', // vermillion
-  '#009E73', // bluish green
-  '#CC79A7', // reddish purple
-  '#56B4E9', // sky blue
-  '#8C6D31', // ochre
-  '#7B52AB', // violet
-  '#00707A', // teal
+  '#0072B2',
+  '#D55E00',
+  '#009E73',
+  '#CC79A7',
+  '#56B4E9',
+  '#8C6D31',
+  '#7B52AB',
+  '#00707A',
 ] as const
 
 /** Stable colour for a route: the same route always gets the same one. */

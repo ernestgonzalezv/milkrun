@@ -19,9 +19,6 @@ def large_instance() -> tuple[Fleet, tuple[Stop, ...]]:
     return homogeneous_fleet(8, capacity=60.0), random_stops(120, seed=99)
 
 
-# --- Fixtures de Django -----------------------------------------------------
-
-
 @pytest.fixture(autouse=True)
 def throttle_limpio():
     """Aisla el rate limiting entre tests.
@@ -53,8 +50,11 @@ def vehicles(depot):
 
     return [
         Vehicle.objects.create(
-            depot=depot, code=f"CAM-{k:02d}", capacity=60.0,
-            max_shift_minutes=480, avg_speed_kmh=25.0,
+            depot=depot,
+            code=f"CAM-{k:02d}",
+            capacity=60.0,
+            max_shift_minutes=480,
+            avg_speed_kmh=25.0,
         )
         for k in range(1, 4)
     ]
@@ -77,8 +77,11 @@ def drivers(depot, vehicles):
     perfiles = []
     for k, vehiculo in enumerate(vehicles, start=1):
         user = User.objects.create_user(
-            username=f"chofer{k}", password="clave-de-prueba",
-            first_name=f"Chofer{k}", last_name="Prueba", role=Role.DRIVER,
+            username=f"chofer{k}",
+            password="clave-de-prueba",
+            first_name=f"Chofer{k}",
+            last_name="Prueba",
+            role=Role.DRIVER,
         )
         perfiles.append(
             DriverProfile.objects.create(user=user, depot=depot, default_vehicle=vehiculo)

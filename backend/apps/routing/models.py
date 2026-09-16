@@ -20,12 +20,18 @@ class Route(models.Model):
         "fleet.Depot", on_delete=models.PROTECT, related_name="routes", verbose_name=_("depot")
     )
     vehicle = models.ForeignKey(
-        "fleet.Vehicle", on_delete=models.PROTECT, related_name="routes",
+        "fleet.Vehicle",
+        on_delete=models.PROTECT,
+        related_name="routes",
         verbose_name=_("vehicle"),
     )
     driver = models.ForeignKey(
-        "accounts.User", on_delete=models.SET_NULL, null=True, blank=True,
-        related_name="routes", verbose_name=_("driver"),
+        "accounts.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="routes",
+        verbose_name=_("driver"),
     )
     date = models.DateField(_("date"))
     status = models.CharField(
@@ -35,7 +41,9 @@ class Route(models.Model):
     planned_duration_minutes = models.FloatField(_("planned duration (min)"), default=0.0)
     planned_load = models.FloatField(_("planned load"), default=0.0)
     optimizer_metrics = models.JSONField(
-        _("optimizer metrics"), default=dict, blank=True,
+        _("optimizer metrics"),
+        default=dict,
+        blank=True,
         help_text=_("Distance against the baselines and solve time, so the plan can be audited."),
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -45,7 +53,6 @@ class Route(models.Model):
         verbose_name_plural = _("routes")
         ordering = ("-date", "vehicle__code")
         constraints = [
-            # Un vehiculo no puede tener dos rutas el mismo dia.
             models.UniqueConstraint(fields=("vehicle", "date"), name="one_route_per_vehicle_day")
         ]
         indexes = [models.Index(fields=("date", "status"), name="route_date_status_idx")]
@@ -61,16 +68,20 @@ class RouteStop(models.Model):
         Route, on_delete=models.CASCADE, related_name="route_stops", verbose_name=_("route")
     )
     stop = models.ForeignKey(
-        "deliveries.Stop", on_delete=models.CASCADE, related_name="route_stops",
+        "deliveries.Stop",
+        on_delete=models.CASCADE,
+        related_name="route_stops",
         verbose_name=_("stop"),
     )
     sequence = models.PositiveIntegerField(_("sequence"))
     leg_distance_km = models.FloatField(
-        _("leg distance (km)"), default=0.0,
+        _("leg distance (km)"),
+        default=0.0,
         help_text=_("From the previous stop, or from the depot when it is the first."),
     )
     eta_minutes = models.FloatField(
-        _("ETA (min from departure)"), default=0.0,
+        _("ETA (min from departure)"),
+        default=0.0,
         help_text=_("The planner's estimate, not the real arrival time."),
     )
 

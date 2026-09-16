@@ -4,24 +4,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0001_initial'),
+        ("accounts", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='user',
-            options={'verbose_name': 'user', 'verbose_name_plural': 'users'},
+            name="user",
+            options={"verbose_name": "user", "verbose_name_plural": "users"},
         ),
         migrations.AlterField(
-            model_name='user',
-            name='phone',
-            field=models.CharField(blank=True, max_length=32, verbose_name='phone'),
+            model_name="user",
+            name="phone",
+            field=models.CharField(blank=True, max_length=32, verbose_name="phone"),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='role',
-            field=models.CharField(choices=[('dispatcher', 'Dispatcher'), ('driver', 'Driver')], default='dispatcher', max_length=16, verbose_name='role'),
+            model_name="user",
+            name="role",
+            field=models.CharField(
+                choices=[("dispatcher", "Dispatcher"), ("driver", "Driver")],
+                default="dispatcher",
+                max_length=16,
+                verbose_name="role",
+            ),
         ),
     ]

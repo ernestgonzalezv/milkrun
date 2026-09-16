@@ -13,6 +13,6 @@
 
 ## Documentation
 
-- [ ] No README figure went stale — or it was updated from a run in this change
+- [ ] No README figure went stale, or it was updated from a run in this change
 - [ ] A new trade-off is in **Known limitations**, or has an ADR
 - [ ] No architecture test was relaxed to make this pass

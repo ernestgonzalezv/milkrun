@@ -7,9 +7,6 @@ from collections.abc import Sequence
 
 EARTH_RADIUS_KM = 6371.0088
 
-# Factor de rodeo: la distancia por calle es mayor que la linea recta.
-# 1.35 es el valor tipico reportado para malla urbana; se puede calibrar
-# contra un servicio de ruteo real sin tocar el resto del solver.
 DEFAULT_DETOUR_FACTOR = 1.35
 
 

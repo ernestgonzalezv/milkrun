@@ -51,8 +51,8 @@ export function Metrics({ metrics, routes, vehicles, unassigned }: Props) {
   if (!metrics) {
     return (
       <div className="metrics">
-        <Metric label="Distance" value="—" note="nothing planned yet" />
-        <Metric label="Saved" value="—" note="run the planner" />
+        <Metric label="Distance" value="," note="nothing planned yet" />
+        <Metric label="Saved" value="," note="run the planner" />
       </div>
     )
   }
@@ -64,9 +64,6 @@ export function Metrics({ metrics, routes, vehicles, unassigned }: Props) {
   const total = metrics.stops_served + unassigned
   const idle = Math.max(0, vehicles.length - routes.length)
 
-  // Busiest route by time, and how much of that driver's shift it eats. A plan
-  // is only feasible if its longest route fits, so the worst case is the one
-  // worth showing — an average would hide exactly the route that breaks.
   const byId = new Map(vehicles.map((v) => [v.id, v]))
   const longest = routes.reduce<Route | null>(
     (worst, r) => (!worst || r.planned_duration_minutes > worst.planned_duration_minutes ? r : worst),
@@ -91,10 +88,6 @@ export function Metrics({ metrics, routes, vehicles, unassigned }: Props) {
       />
       <Metric
         label="Saved"
-        // Truncated for the same reason the capacity tile is: this is the number
-        // that justifies the software, so it rounds against itself. Claiming 66
-        // saved kilometres when 65.6 were saved is a small lie in the one place
-        // where credibility is the whole point.
         value={`${saved >= 0 ? '' : '+'}${Math.floor(Math.abs(saved))} km`}
         note={`${sign}${Math.abs(gain).toFixed(1)}% vs manual routing`}
         tone={gain > 0 ? 'good' : 'bad'}
@@ -112,7 +105,7 @@ export function Metrics({ metrics, routes, vehicles, unassigned }: Props) {
       />
       <Metric
         label="Longest shift"
-        value={longest ? hours(longest.planned_duration_minutes) : '—'}
+        value={longest ? hours(longest.planned_duration_minutes) : ','}
         note={
           longest && shiftLimit
             ? `${longest.vehicle_code} · ${hours(shiftLimit)} limit`
@@ -120,16 +113,11 @@ export function Metrics({ metrics, routes, vehicles, unassigned }: Props) {
               ? longest.vehicle_code
               : undefined
         }
-        // 90% of the shift leaves under an hour of slack. One bad address or
-        // one closed street and that driver goes into overtime.
         tone={shiftUse >= 0.9 ? 'alert' : 'neutral'}
       />
       <Metric
         label="Fullest van"
-        // Truncated, not rounded: 99.7% shown as 100% tells the dispatcher the
-        // van is full when there is still room, and this tile exists precisely
-        // to answer whether one more order fits.
-        value={fullest ? `${Math.floor(fullest.use * 100)}%` : '—'}
+        value={fullest ? `${Math.floor(fullest.use * 100)}%` : ','}
         note={
           fullest
             ? fullest.use >= 0.95

@@ -20,7 +20,7 @@ extract an atom, not to raise the limit.
 
 - **ViewModel owns business state** as `StateFlow`. Screens observe with
   `collectAsStateWithLifecycle()`, never `collectAsState()`.
-- **Screens own ephemeral UI state** — text being typed, sheet open, scroll position — via
+- **Screens own ephemeral UI state**, text being typed, sheet open, scroll position, via
   `remember`/`rememberSaveable`. Credentials being typed live in the screen, not the ViewModel.
 - **Atoms own nothing.** Immutable parameters and callbacks only.
 - Never call a ViewModel method from a Composable body. Only from `LaunchedEffect`, a callback,
@@ -30,7 +30,7 @@ extract an atom, not to raise the limit.
 ## Previews
 
 Every reusable Composable ships `@Preview` entries for its visually distinct states, in the same
-file, `private`, wrapped in `MilkrunTheme { }`, with realistic data — never "Lorem ipsum",
+file, `private`, wrapped in `MilkrunTheme { }`, with realistic data, never "Lorem ipsum",
 which hides truncation bugs. Add a `uiMode = UI_MODE_NIGHT_YES` variant when dark mode differs.
 Previews never call `koinViewModel()`; pass a fake state.
 
@@ -38,7 +38,7 @@ Previews never call `koinViewModel()`; pass a fake state.
 
 A control is drivable by a screen reader when its node reports both a **role** and a **name**.
 
-- `Modifier.clickable` has no role by default — pass `role = Role.Button`.
+- `Modifier.clickable` has no role by default, pass `role = Role.Button`.
 - `clickable` does not merge descendants: a `contentDescription` on the inner icon never reaches
   the control. Put the name on the clickable node with `semantics(mergeDescendants = true)` and
   pass `contentDescription = null` to the icon.

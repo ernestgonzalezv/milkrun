@@ -1,6 +1,6 @@
 """La referencia contra OR-Tools.
 
-No se prueba que OR-Tools funcione —es de Google y ya esta probado—, sino que
+No se prueba que OR-Tools funcione (es de Google y ya esta probado), sino que
 lo estamos usando BIEN: que reciba las mismas restricciones que el solver
 propio y que lea el resultado con el mismo criterio. Un error aqui no se veria
 como un fallo: se veria como una comparacion que parece razonable y no lo es.
@@ -94,7 +94,6 @@ def test_respeta_la_capacidad_de_los_vehiculos():
 
     capacidad = fleet.vehicles[0].capacity
     for ruta in resultado.routes:
-        # Holgura por el redondeo a centesimas que exige la dimension entera.
         assert sum(demands[n] for n in ruta) <= capacidad + 0.01
 
 
@@ -117,7 +116,7 @@ def test_respeta_la_jornada_maxima():
 
     for ruta in resultado.routes:
         duracion = route_duration_minutes(matrix, list(ruta), service, 25.0)
-        assert duracion <= 120.0 + 1.0  # 1 min de holgura por redondeo a segundos
+        assert duracion <= 120.0 + 1.0
 
 
 def test_deja_paradas_fuera_si_la_flota_no_alcanza():

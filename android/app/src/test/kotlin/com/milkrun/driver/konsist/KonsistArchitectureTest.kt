@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
  * The architecture rules, enforced.
  *
  * A convention that lives only in a document erodes on the first hurried afternoon. These fail
- * the build instead. When one fails, fix the code — never the test.
+ * the build instead. When one fails, fix the code, never the test.
  */
 class KonsistArchitectureTest {
 
