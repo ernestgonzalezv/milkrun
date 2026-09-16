@@ -18,7 +18,7 @@ reviewed until it is green.
 
 ## Where the rules live
 
-`.claude/rules/` holds path-scoped conventions that apply to whatever you touch — Python
+`.claude/rules/` holds path-scoped conventions that apply to whatever you touch: Python
 architecture, Kotlin and Compose, React, Terraform, and the always-on ones about verification and
 edit safety. They are written for an AI assistant but they are the same rules a human reviewer
 applies.
@@ -32,7 +32,7 @@ applies.
   ([ADR 0002](docs/adr/0002-bitacora-append-only-y-estado-proyectado.md)). Writing it by hand
   breaks the guarantee that makes the driver's offline queue safe to resend.
 - **Touching the solver without running `make bench`.** The benchmark is the contract. If a number
-  in the README moves, update the README in the same change — with figures from a run you did, not
+  in the README moves, update the README in the same change, with figures from a run you did, not
   carried forward.
 - **Claiming the solver beats OR-Tools.** The defensible claim is bounded; see the README section
   and keep it that way.
@@ -41,7 +41,7 @@ applies.
 
 ## Comments
 
-Default is none. Add one only when the *why* is not obvious from the code — a hidden constraint, an
+Default is none. Add one only when the *why* is not obvious from the code: a hidden constraint, an
 upstream quirk, a deliberate trade. Never narrate what the code does.
 
 ## Commits
@@ -59,4 +59,4 @@ lands after ours and wins the tie.
 ## Reporting a bug
 
 Include the command you ran, what you expected, and the actual output. For anything involving the
-solver, include the seed — every benchmark and test instance is reproducible from one.
+solver, include the seed. Every benchmark and test instance is reproducible from one.

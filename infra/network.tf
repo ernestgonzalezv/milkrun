@@ -48,8 +48,11 @@ resource "aws_subnet" "publica" {
   availability_zone = data.aws_availability_zones.disponibles.names[count.index]
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index)
 
-  # Solo aqui. Es lo que distingue "publica" de "privada" mas que el nombre.
-  map_public_ip_on_launch = true
+  # Falso a proposito. Lo que hace publica a esta subnet es su tabla de rutas
+  # hacia el IGW, no que reparta IPs automaticamente. Aqui solo vive el ALB,
+  # que trae las suyas, y el NAT, que usa una Elastic IP. Asignar IP publica
+  # por defecto solo serviria para que algo creado sin pensar quede expuesto.
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "${var.project}-publica-${count.index}"

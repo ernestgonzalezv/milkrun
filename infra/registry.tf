@@ -34,10 +34,10 @@ resource "aws_ecr_lifecycle_policy" "api" {
         rulePriority = 1
         description  = "Conservar las ultimas 10 imagenes etiquetadas"
         selection = {
-          tagStatus     = "tagged"
+          tagStatus      = "tagged"
           tagPatternList = ["*"]
-          countType     = "imageCountMoreThan"
-          countNumber   = 10
+          countType      = "imageCountMoreThan"
+          countNumber    = 10
         }
         action = { type = "expire" }
       },

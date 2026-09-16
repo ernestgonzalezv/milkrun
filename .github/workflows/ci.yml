@@ -171,6 +171,7 @@ jobs:
           framework: terraform
           quiet: true
           output_format: cli
-          # Las excepciones se justifican en infra/README.md, no se silencian
-          # a ciegas. Si aparece un hallazgo nuevo, el job falla a proposito.
-          skip_check: CKV_AWS_144,CKV_AWS_18,CKV_AWS_28,CKV_AWS_338
+          # Cada exclusion esta justificada una por una en la tabla de
+          # infra/README.md. Un hallazgo que no este en esa tabla hace fallar
+          # el job a proposito: la lista es un acuerdo escrito, no un silenciador.
+          skip_check: CKV2_AWS_11,CKV_AWS_118,CKV_AWS_353,CKV2_AWS_30,CKV_AWS_86,CKV_AWS_91,CKV2_AWS_28,CKV_AWS_68,CKV2_AWS_47,CKV2_AWS_20,CKV_AWS_103,CKV_AWS_378,CKV_AWS_260,CKV2_AWS_42,CKV_AWS_174,CKV_AWS_150,CKV_AWS_293,CKV_AWS_157,CKV_AWS_136,CKV_AWS_145,CKV_AWS_158,CKV_AWS_337,CKV2_AWS_62,CKV_AWS_310,CKV_AWS_374,CKV2_AWS_32,CKV_AWS_336,CKV_AWS_144,CKV_AWS_18,CKV_AWS_338

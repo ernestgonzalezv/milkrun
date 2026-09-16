@@ -113,3 +113,11 @@ resource "aws_vpc_security_group_ingress_rule" "rds_desde_ecs" {
 # A proposito no hay regla de egress para RDS. Sin ninguna regla de salida, el
 # grupo no deja salir nada, que es justo lo que se quiere: una base de datos no
 # tiene por que iniciar conexiones hacia ningun lado.
+
+# AWS crea un security group "default" en cada VPC que permite todo el trafico
+# entre sus miembros. No se usa aqui, pero existe, y cualquier recurso creado
+# sin grupo explicito cae en el. Declararlo vacio lo convierte en inofensivo.
+resource "aws_default_security_group" "principal" {
+  vpc_id = aws_vpc.principal.id
+  tags   = { Name = "${var.project}-default-cerrado" }
+}

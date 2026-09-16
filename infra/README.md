@@ -112,6 +112,77 @@ Esta lista importa tanto como la de arriba.
 | **WAF** | Cuesta ~5 USD/mes de base y aqui no hay trafico que defender. Iria en produccion real. |
 | **Multi-AZ en RDS / un NAT por AZ** | Duplican el precio de las dos piezas mas caras. Ambas quedan anotadas abajo como limitaciones. |
 
+## Checkov: 169 pasan, 6 arreglados, 29 justificados
+
+El job de CI falla si aparece un hallazgo que no este en esta tabla. La lista de
+`skip_check` del workflow no es un silenciador: es un acuerdo escrito, y cada
+linea de abajo tiene que sostenerse sola.
+
+### Arreglados, porque eran reales y baratos
+
+| Check | Que se hizo |
+|---|---|
+| `CKV2_AWS_12` | El security group por defecto de la VPC se declara vacio. AWS lo crea permitiendo todo el trafico entre sus miembros, y cualquier recurso creado sin grupo explicito cae ahi. |
+| `CKV_AWS_130` | Las subnets publicas dejan de asignar IP publica automatica. Lo que las hace publicas es su tabla de rutas; el ALB trae sus propias IPs y el NAT usa una Elastic IP. |
+| `CKV2_AWS_60` | RDS copia los tags a los snapshots. La cuenta es prestada y todo lo que quede vivo tiene que salir con un solo filtro. |
+| `CKV_AWS_161` | Autenticacion IAM en RDS. Permite credenciales temporales en vez de la contrasena maestra, y no cuesta nada. |
+| `CKV_AWS_26` | El topico SNS va cifrado con la clave gestionada de AWS. |
+| `CKV2_AWS_61` | Caducidad de versiones antiguas en S3. El bucket tiene versionado; sin regla de expiracion crece sin techo y se paga almacenamiento de builds que nadie va a restaurar. |
+
+### Excluidos: cuestan dinero en un stack que nunca se enciende
+
+`CKV2_AWS_11` flow logs de VPC · `CKV_AWS_118` monitorizacion mejorada de RDS ·
+`CKV_AWS_353` performance insights · `CKV2_AWS_30` query logging de Postgres ·
+`CKV_AWS_86` logs de CloudFront · `CKV_AWS_91` logs del ALB ·
+`CKV2_AWS_28` `CKV_AWS_68` `CKV2_AWS_47` WAF ·
+`CKV_AWS_338` un ano de retencion de logs
+
+Todos son correctos en produccion. WAF son ~5 USD/mes de base y los logs se pagan
+por ingesta. Este stack no atiende trafico, asi que pagarian por nada.
+
+El ultimo merece un matiz: `CKV_AWS_338` pide 365 dias por auditoria, y aqui hay
+30. El log group se declara explicitamente justo para eso, porque si lo crea ECS
+nace con retencion infinita y se paga almacenamiento para siempre. Treinta dias
+cubren la depuracion de un despliegue; un ano cubre una auditoria que este
+proyecto no tiene.
+
+### Excluidos: necesitan un dominio propio
+
+`CKV2_AWS_20` redireccion HTTP a HTTPS · `CKV_AWS_103` TLS 1.2 en el balanceador ·
+`CKV_AWS_378` el ALB no debe usar HTTP · `CKV_AWS_260` entrada 0.0.0.0/0 al puerto 80 ·
+`CKV2_AWS_42` certificado propio en CloudFront · `CKV_AWS_174` TLS 1.2 en CloudFront
+
+ACM valida por DNS, y sin control de una zona no hay certificado posible. El stack se
+adapta: con `domain_name` monta ACM, redireccion y politica TLS 1.3; sin el se queda
+en HTTP y el output lo dice. En cuanto se define la variable, estos seis dejan de
+fallar solos.
+
+### Excluidos: decisiones de demo, ya en Limitaciones conocidas
+
+`CKV_AWS_150` proteccion de borrado del ALB · `CKV_AWS_293` proteccion de borrado de RDS ·
+`CKV_AWS_157` Multi-AZ en RDS
+
+Las dos primeras harian que `terraform destroy` fallara y obligara a ir a la consola.
+Multi-AZ duplica el precio de la pieza mas cara.
+
+### Excluidos: clave gestionada por AWS en vez de CMK propia
+
+`CKV_AWS_136` ECR · `CKV_AWS_145` S3 · `CKV_AWS_158` CloudWatch Logs · `CKV_AWS_337` SSM
+
+Todo esta cifrado en reposo; lo que checkov pide es una clave gestionada por el
+cliente. Una CMK cuesta 1 USD al mes y trae rotacion, politica y el riesgo de
+perder el acceso a los datos si se borra. Para datos de demo el reparto no compensa.
+
+### Excluidos: no aplican a esta arquitectura
+
+| Check | Por que |
+|---|---|
+| `CKV2_AWS_62` | Notificaciones de evento en S3. El bucket sirve un build estatico; no hay nada que reaccione a una subida. |
+| `CKV_AWS_310` | Failover de origen en CloudFront. Hay un solo origen. |
+| `CKV_AWS_374` | Restriccion geografica. Un panel de reparto no tiene motivo para bloquear paises. |
+| `CKV2_AWS_32` | Politica de cabeceras de respuesta. **Si esta puesta** (`SecurityHeadersPolicy` por su id gestionado); checkov no resuelve politicas gestionadas por id. |
+| `CKV_AWS_336` | Raiz de solo lectura en ECS. Fargate no soporta `tmpfs`, y gunicorn necesita escribir en `/tmp`. |
+
 ## Limitaciones conocidas
 
 Decisiones con su coste a la vista, no pendientes escondidos.

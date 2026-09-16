@@ -40,6 +40,11 @@ resource "aws_budgets_budget" "mensual" {
 
 resource "aws_sns_topic" "alarmas" {
   name = "${var.project}-alarmas"
+
+  # Una alarma lleva nombres de recurso y umbrales. No es secreto, pero cifrar
+  # con la clave gestionada de AWS no cuesta nada ni complica la operacion.
+  kms_master_key_id = "alias/aws/sns"
+
   tags = { Name = "${var.project}-alarmas" }
 }
 

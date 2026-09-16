@@ -24,7 +24,7 @@ them is not necessary:
   do not apply.
 - The Android app stores tokens in DataStore without encryption. Production would use the Keystore.
 - `seed_demo` creates users with a well-known password. It is a development command and refuses
-  nothing — never run it against a real database.
+  nothing. Never run it against a real database.
 
 ## Out of scope
 

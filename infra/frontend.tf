@@ -47,6 +47,28 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "web" {
   }
 }
 
+# El versionado de arriba guarda cada build del dashboard para siempre. Sin una
+# regla de caducidad el bucket crece sin techo y se paga almacenamiento por
+# versiones que nadie va a restaurar.
+resource "aws_s3_bucket_lifecycle_configuration" "web" {
+  bucket = aws_s3_bucket.web.id
+
+  rule {
+    id     = "caducar-versiones-viejas"
+    status = "Enabled"
+
+    filter {}
+
+    noncurrent_version_expiration {
+      noncurrent_days = 30
+    }
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+  }
+}
+
 resource "aws_cloudfront_origin_access_control" "web" {
   name                              = "${var.project}-web"
   description                       = "Solo CloudFront puede leer el bucket"
@@ -61,8 +83,8 @@ resource "aws_cloudfront_origin_access_control" "web" {
 # CloudFront de cualquier cuenta de AWS podria leer el bucket.
 data "aws_iam_policy_document" "web" {
   statement {
-    sid     = "SoloEstaDistribucionDeCloudFront"
-    actions = ["s3:GetObject"]
+    sid       = "SoloEstaDistribucionDeCloudFront"
+    actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.web.arn}/*"]
 
     principals {

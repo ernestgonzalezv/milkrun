@@ -24,7 +24,7 @@ Behaviour that is not acceptable:
 
 ## Scope
 
-This applies within all project spaces — issues, pull requests, discussions — and when an
+This applies within all project spaces (issues, pull requests, discussions) and when an
 individual is representing the project in public spaces.
 
 ## Enforcement
